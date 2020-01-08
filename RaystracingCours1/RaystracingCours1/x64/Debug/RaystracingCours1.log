@@ -1,0 +1,23 @@
+﻿  pch.cpp
+  Ray.cpp
+  RayTracing.cpp
+g:\centrale\semestre 10\informatique graphique\repos\raystracingcours1\raystracingcours1\raytracing.cpp(72): warning C4244: '=' : conversion de 'double' en '_Ty', perte possible de données
+          with
+          [
+              _Ty=unsigned char
+          ]
+g:\centrale\semestre 10\informatique graphique\repos\raystracingcours1\raystracingcours1\raytracing.cpp(73): warning C4244: '=' : conversion de 'double' en '_Ty', perte possible de données
+          with
+          [
+              _Ty=unsigned char
+          ]
+g:\centrale\semestre 10\informatique graphique\repos\raystracingcours1\raystracingcours1\raytracing.cpp(74): warning C4244: '=' : conversion de 'double' en '_Ty', perte possible de données
+          with
+          [
+              _Ty=unsigned char
+          ]
+  Scene.cpp
+  Sphere.cpp
+  Vector3.cpp
+  Génération de code en cours...
+  RaystracingCours1.vcxproj -> G:\CENTRALE\Semestre 10\Informatique graphique\repos\RaystracingCours1\x64\Debug\RayTracing.exe
