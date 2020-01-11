@@ -2,9 +2,9 @@
 #include "triangle.h"
 
 
-Triangle::Triangle(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C, const Vector3 &_albedo)
+Triangle::Triangle(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C, const Materiau &_materiau)
 {
-	albedo = Vector3(_albedo);
+	materiau = Materiau(_materiau);
 	A = Vector3(_A);
 	B = Vector3(_B);
 	C = Vector3(_C);

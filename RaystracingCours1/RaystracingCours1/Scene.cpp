@@ -47,7 +47,7 @@ bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Vector3 *pAl
 				t = _t;
 				*pPoint = _pt;
 				*pNormale = _n;
-				*pAlbedo = spheres[i]->albedo;
+				*pAlbedo = spheres[i]->materiau.albedo;
 			}
 	}
 
@@ -63,7 +63,7 @@ bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Vector3 *pAl
 				t = _t;
 				*pPoint = _pt;
 				*pNormale = _n;
-				*pAlbedo = triangles[i]->albedo;
+				*pAlbedo = triangles[i]->materiau.albedo;
 			}
 	}
 

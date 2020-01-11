@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector3.h"
 #include "Ray.h"
+#include "Materiau.h"
 class Triangle
 {
 private:
@@ -11,8 +12,8 @@ private:
 	void initialiser();
 public:
 	Vector3 A, B, C;//Ne pas les modifier de l'extérieur
-	Vector3 albedo;
-	Triangle(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C, const Vector3 &_albedo);
+	Materiau materiau;
+	Triangle(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C, const Materiau &_materiau);
 	~Triangle();
 
 	void NouvellesCoordonnees(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C);

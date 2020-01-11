@@ -8,8 +8,8 @@ Sphere::Sphere() : centre()
 	rayon = 1;
 }
 
-Sphere::Sphere(const Vector3& _centre, double _rayon, const Vector3 &_albedo) :
-	centre(_centre), albedo(_albedo)
+Sphere::Sphere(const Vector3& _centre, double _rayon, const Materiau &_materiau) :
+	centre(_centre), materiau(_materiau)
 {
 	rayon = _rayon;
 }

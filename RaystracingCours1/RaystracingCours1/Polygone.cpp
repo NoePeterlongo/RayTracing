@@ -143,7 +143,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio)
 				Vector3 C = Vector3(origine.x + ratio * x, origine.y + ratio * y, origine.z + ratio * z);
 		
 
-				Triangle *pTriangle = new Triangle(A, B, C, Vector3(0.3, 0.6, 0));
+				Triangle *pTriangle = new Triangle(A, B, C, Materiau(Vector3(0.2, 0.6, 0)));
 				faces.push_back(pTriangle);
 			}
 		}
