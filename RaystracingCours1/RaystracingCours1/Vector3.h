@@ -21,3 +21,5 @@ Vector3 operator*(const Vector3 &a, const Vector3 &b);
 Vector3 operator*(const double &b, const Vector3 &a);
 Vector3 operator*(const Vector3 &a, const double &b);
 Vector3 operator/(const Vector3 &a, const double &b);
+
+Vector3 ProduitVectoriel(const Vector3 &a, const Vector3 &b);

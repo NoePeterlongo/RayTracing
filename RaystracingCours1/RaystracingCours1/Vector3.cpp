@@ -89,3 +89,8 @@ Vector3 operator/(const Vector3 &a, const double &b)
 {
 	return Vector3(a.x/b, a.y/b, a.z/b);
 }
+
+Vector3 ProduitVectoriel(const Vector3 &a, const Vector3 &b)
+{
+	return Vector3(a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y-a.y*b.x);
+}
