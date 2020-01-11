@@ -8,6 +8,11 @@ Triangle::Triangle(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C, cons
 	A = Vector3(_A);
 	B = Vector3(_B);
 	C = Vector3(_C);
+	initialiser();
+}
+
+void Triangle::initialiser()
+{
 	u1 = B - A;
 	mu1 = A - B;
 	u2 = C - A;
@@ -19,13 +24,12 @@ Triangle::Triangle(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C, cons
 
 	v = ProduitVectoriel(n, u1);
 	v2 = ProduitVectoriel(n, u3);
-	alpha = u2.Dot(u1)/u1.Norme2();
-	beta = u2.Dot(v)/v.Norme2();
+	alpha = u2.Dot(u1) / u1.Norme2();
+	beta = u2.Dot(v) / v.Norme2();
 
 	alpha2 = mu1.Dot(u3) / u3.Norme2();
 	beta2 = mu1.Dot(v2) / v2.Norme2();
 }
-
 
 Triangle::~Triangle()
 {
@@ -73,4 +77,12 @@ bool Triangle::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *p
 		return false;
 
 	return true;
+}
+
+void Triangle::NouvellesCoordonnees(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C)
+{
+	A = Vector3(_A);
+	B = Vector3(_B);
+	C = Vector3(_C);
+	initialiser();
 }

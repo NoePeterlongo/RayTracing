@@ -2,6 +2,7 @@
 #include <vector>
 #include "Sphere.h"
 #include "triangle.h"
+#include "Polygone.h"
 
 class Scene
 {
@@ -14,6 +15,7 @@ public:
 
 	void AjouterSphere(Sphere *pSphere);
 	void AjouterTriangle(Triangle *pTriangle);
+	void AjouterPolygone(Polygone *pPolygone);
 	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Vector3 *pAlbedo);
 };
 

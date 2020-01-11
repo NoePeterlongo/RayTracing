@@ -21,6 +21,14 @@ void Scene::AjouterTriangle(Triangle *pTriangle)
 	triangles.push_back(pTriangle);
 }
 
+void Scene::AjouterPolygone(Polygone *pPolygone)
+{
+	for (int i = 0; i < pPolygone->faces.size(); i++)
+	{
+		AjouterTriangle(pPolygone->faces[i]);
+	}
+}
+
 bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Vector3 *pAlbedo)
 {
 	Vector3 point, normale, albedo;
