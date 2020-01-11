@@ -1,5 +1,9 @@
 #pragma once
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 #include "Vector3.h"
 #include "triangle.h"
 
@@ -13,5 +17,8 @@ public:
 
 	void AjouterFace(Triangle *pTriangle);
 	void SetOrigine(const Vector3 &_nouvelleOrigine);
+	void ChargerFichier(const char *nomFichier, double ratio);
 };
+
+double strToDouble(std::string chaine);
 
