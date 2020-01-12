@@ -29,7 +29,13 @@ void Scene::AjouterPolygone(Polygone *pPolygone)
 	}
 }
 
-bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Vector3 *pAlbedo)
+void Scene::ReglerLampe(Vector3 position, Vector3 intensite)
+{
+	positionLampe = position;
+	intensiteLampe = intensite;
+}
+
+bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pMateriau)
 {
 	Vector3 point, normale, albedo;
 	bool intersection = false;
@@ -47,7 +53,7 @@ bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Vector3 *pAl
 				t = _t;
 				*pPoint = _pt;
 				*pNormale = _n;
-				*pAlbedo = spheres[i]->materiau.albedo;
+				*pMateriau = spheres[i]->materiau;
 			}
 	}
 
@@ -63,9 +69,42 @@ bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Vector3 *pAl
 				t = _t;
 				*pPoint = _pt;
 				*pNormale = _n;
-				*pAlbedo = triangles[i]->materiau.albedo;
+				*pMateriau = triangles[i]->materiau;
 			}
 	}
 
 	return intersection;
+}
+
+Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
+{
+	Vector3 pointIntersection, normaleIntersection, pointIntersectionO, normaleIntersectionO;
+	Materiau materiau, materiauO;
+	if (Intersect(ray, &pointIntersection, &normaleIntersection, &materiau))
+	{
+		//Gestion de l'ombre
+		bool aLOmbre = false;
+		Ray rayonOmbre(pointIntersection + 0.01*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
+
+		if (Intersect(rayonOmbre, &pointIntersectionO, &normaleIntersectionO, &materiauO))
+		{
+			//On regarde si l'intersection est plus proche de P que la lampe
+			if ((pointIntersectionO - pointIntersection).Norme2() < (positionLampe - pointIntersection).Norme2())
+				aLOmbre = true;
+		}
+
+		Vector3 intensite;
+
+		if (!aLOmbre)
+			intensite = intensiteLampe * materiau.albedo *
+			normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser())
+			/ ((positionLampe - pointIntersection).Norme2());
+		else
+			intensite = Vector3(0.1, 0.1, 0.1);
+		intensite.Puissance(0.45);
+		intensite.Contraindre(0, 255);
+		
+		return intensite;
+	}
+	return Vector3(0, 0, 0);
 }
