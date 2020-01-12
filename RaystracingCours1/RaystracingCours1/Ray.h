@@ -8,6 +8,7 @@ public:
 	Ray();
 	Ray(const Vector3 &_origine, const Vector3 &_direction);
 	~Ray();
+	Ray Rebond(Vector3 point, Vector3 normale);
 };
 
 

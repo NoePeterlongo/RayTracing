@@ -1,4 +1,13 @@
 #pragma once
+
+#define ROUGE Vector3(0.7, 0, 0)
+#define GRIS Vector3(0.4, 0.4, 0.4)
+#define VERT Vector3(0, 0.4, 0.12)
+#define NOIR Vector3(0,0,0)
+#define BLANC Vector3(1,1,1)
+#define CYAN Vector3(0, 0.7, 0.7)
+
+
 class Vector3
 {
 

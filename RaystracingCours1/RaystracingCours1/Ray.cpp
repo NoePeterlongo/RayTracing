@@ -14,3 +14,9 @@ Ray::~Ray()
 {
 }
 
+Ray Ray::Rebond(Vector3 point, Vector3 normale)
+{
+	Vector3 nouvelleDirection = direction - 2 * direction.Dot(normale)*normale;
+	return Ray(point, nouvelleDirection);
+}
+

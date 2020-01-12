@@ -80,8 +80,18 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 {
 	Vector3 pointIntersection, normaleIntersection, pointIntersectionO, normaleIntersectionO;
 	Materiau materiau, materiauO;
+	Vector3 intensite(0,0,0);//Noir
 	if (Intersect(ray, &pointIntersection, &normaleIntersection, &materiau))
 	{
+		//Partie speculaire
+		if (materiau.spec > 0 && nb_rebonds > 0)
+		{
+			Ray nouveauRayon = ray.Rebond(pointIntersection + 0.01*normaleIntersection, normaleIntersection);//On se décale un peu de la surface
+			intensite = materiau.spec*GetColor(nouveauRayon, nb_rebonds - 1);
+		}
+
+		//Partie Diffuse
+
 		//Gestion de l'ombre
 		bool aLOmbre = false;
 		Ray rayonOmbre(pointIntersection + 0.01*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
@@ -93,16 +103,13 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 				aLOmbre = true;
 		}
 
-		Vector3 intensite;
 
 		if (!aLOmbre)
-			intensite = intensiteLampe * materiau.albedo *
+			intensite = intensite + intensiteLampe * materiau.albedo *
 			normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser())
 			/ ((positionLampe - pointIntersection).Norme2());
 		else
-			intensite = Vector3(0.1, 0.1, 0.1);
-		intensite.Puissance(0.45);
-		intensite.Contraindre(0, 255);
+			intensite = intensite + Vector3(0,0,0);
 		
 		return intensite;
 	}
