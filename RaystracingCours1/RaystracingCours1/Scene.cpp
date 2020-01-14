@@ -103,13 +103,12 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 				aLOmbre = true;
 		}
 
+		double coefOmbre = aLOmbre ? 0.05 : 1;
 
-		if (!aLOmbre)
-			intensite = intensite + intensiteLampe * materiau.albedo *
+		intensite = intensite + coefOmbre*intensiteLampe * materiau.albedo *
 			normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser())
 			/ ((positionLampe - pointIntersection).Norme2());
-		else
-			intensite = intensite + Vector3(0,0,0);
+		
 		
 		return intensite;
 	}

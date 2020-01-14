@@ -17,7 +17,8 @@ public:
 
 	void AjouterFace(Triangle *pTriangle);
 	void SetOrigine(const Vector3 &_nouvelleOrigine);
-	void ChargerFichier(const char *nomFichier, double ratio);
+	void ChargerFichier(const char *nomFichier, double ratio, Materiau materiau);
+	void Tourner(Vector3 axe, double angleDegres);
 };
 
 double strToDouble(std::string chaine);

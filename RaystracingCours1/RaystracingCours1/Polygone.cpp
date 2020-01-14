@@ -28,7 +28,7 @@ void Polygone::SetOrigine(const Vector3 &_nouvelleOrigine)
 	}
 }
 
-void Polygone::ChargerFichier(const char *nomFichier, double ratio)
+void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau materiau)
 {
 	std::ifstream fichier(nomFichier);
 
@@ -143,7 +143,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio)
 				Vector3 C = Vector3(origine.x + ratio * x, origine.y + ratio * y, origine.z + ratio * z);
 		
 
-				Triangle *pTriangle = new Triangle(A, B, C, Materiau(Vector3(0.2, 0.6, 0)));
+				Triangle *pTriangle = new Triangle(A, B, C, materiau);
 				faces.push_back(pTriangle);
 			}
 		}
@@ -158,4 +158,33 @@ double strToDouble(std::string chaine)
 	double d;
 	os >> d;
 	return d;
+}
+
+void Polygone::Tourner(Vector3 axe, double angle)
+{
+	Vector3 a, b, c = axe;
+	Vector3 ap, bp;
+	angle *= 3.14 / 180;
+
+	c.Normaliser();
+
+	//cas 1 axe = (1,0,0)
+	if (c.x == 1 && c.y == 0 && c.z == 0)
+		a = Vector3(0, 1, 0);
+	else
+		a = ProduitVectoriel(c, Vector3(1, 0, 0)).Normaliser();
+
+	b = ProduitVectoriel(c, a);
+
+	ap = std::cos(angle)*a + std::sin(angle)*b;
+	bp = -std::sin(angle)*a + std::cos(angle)*b;
+
+	for (int i = 0; i < faces.size(); i++)
+	{
+		Vector3 nvA, nvB, nvC;//Pas les mêmes A, B, C que les axes
+		nvA = origine + (faces[i]->A - origine).Dot(a)*ap + (faces[i]->A - origine).Dot(b)*bp + (faces[i]->A - origine).Dot(c)*c;
+		nvB = origine + (faces[i]->B - origine).Dot(a)*ap + (faces[i]->B - origine).Dot(b)*bp + (faces[i]->B - origine).Dot(c)*c;
+		nvC = origine + (faces[i]->C - origine).Dot(a)*ap + (faces[i]->C - origine).Dot(b)*bp + (faces[i]->C - origine).Dot(c)*c;
+		faces[i]->NouvellesCoordonnees(nvA, nvB, nvC);
+	}
 }
