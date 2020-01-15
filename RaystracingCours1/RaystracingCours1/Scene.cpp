@@ -86,15 +86,51 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 		//Partie speculaire
 		if (materiau.spec > 0 && nb_rebonds > 0)
 		{
-			Ray nouveauRayon = ray.Rebond(pointIntersection + 0.01*normaleIntersection, normaleIntersection);//On se décale un peu de la surface
+			Ray nouveauRayon = ray.Rebond(pointIntersection + 0.001*normaleIntersection, normaleIntersection);//On se décale un peu de la surface
 			intensite = materiau.spec*GetColor(nouveauRayon, nb_rebonds - 1);
+		}
+
+		//Partie transmise//transparence
+		if (materiau.transparent)
+		{
+			Vector3 nouvelleDirection, normale;
+			double compoInc, compoNorm, partieSousRacine;
+			double rapportIndices;
+			if (normaleIntersection.Dot(ray.direction) < 0)
+			{
+				rapportIndices = 1 / materiau.indiceRefraction;
+				normale = normaleIntersection;
+			}
+			else
+			{
+				rapportIndices = materiau.indiceRefraction;
+				normale = Vector3(0, 0, 0) - normaleIntersection;
+			}
+			
+			compoInc = rapportIndices;
+			partieSousRacine = 1 - std::pow(rapportIndices,2)*(1-std::pow(ray.direction.Dot(normale), 2));
+			if(partieSousRacine > 0)
+				compoNorm = rapportIndices*ray.direction.Dot(normale) + std::sqrt(partieSousRacine);
+			
+
+			if (partieSousRacine > 0)
+			{
+				nouvelleDirection = compoInc * ray.direction - compoNorm * normale;
+				Ray nvRay(pointIntersection - 0.001*normale, nouvelleDirection);
+				intensite = intensite + GetColor(nvRay, nb_rebonds-1);
+			}
+			else //réflexion totale
+			{
+				Ray nouveauRayon = ray.Rebond(pointIntersection - 0.001*normale, normale);
+				intensite = intensite + GetColor(nouveauRayon, nb_rebonds - 1);
+			}
 		}
 
 		//Partie Diffuse
 
 		//Gestion de l'ombre
 		bool aLOmbre = false;
-		Ray rayonOmbre(pointIntersection + 0.01*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
+		Ray rayonOmbre(pointIntersection + 0.001*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
 
 		if (Intersect(rayonOmbre, &pointIntersectionO, &normaleIntersectionO, &materiauO))
 		{
