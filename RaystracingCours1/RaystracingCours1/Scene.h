@@ -1,13 +1,20 @@
 #pragma once
 #include <vector>
+#include <random>
 #include "Sphere.h"
 #include "triangle.h"
 #include "Polygone.h"
 #include "Materiau.h"
 
+
+
 class Scene
 {
 	Vector3 positionLampe, intensiteLampe;
+
+	std::default_random_engine engine;
+	std::uniform_real_distribution<double> distrib;
+	
 public:
 	std::vector<Sphere*> spheres;
 	std::vector<Triangle*> triangles;

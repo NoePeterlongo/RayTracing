@@ -6,12 +6,14 @@ public:
 	Vector3 albedo;
 	double spec;
 	bool transparent;
-	double indiceRefraction;
+	double indiceRefraction, coefDiffus;
 
 	Materiau();
 	Materiau(const Vector3 &_albedo);
 	Materiau(const Vector3 &_albedo, double _spec);
 	Materiau(const Vector3 &_albedo, double _spec, bool _transparent, double _indiceRefraction);
+	Materiau(const Vector3 &_albedo, double _spec, bool _transparent, double _indiceRefraction, double _coefDiffus);
+	
 
 	~Materiau();
 };

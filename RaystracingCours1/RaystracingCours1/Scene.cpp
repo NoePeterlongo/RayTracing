@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "Scene.h"
 
+#define FRESNEL false
+
 
 Scene::Scene()
 {
+	distrib = std::uniform_real_distribution<double>(0, 1);
 }
 
 
@@ -106,26 +109,42 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 				rapportIndices = materiau.indiceRefraction;
 				normale = Vector3(0, 0, 0) - normaleIntersection;
 			}
-			
-			compoInc = rapportIndices;
-			partieSousRacine = 1 - std::pow(rapportIndices,2)*(1-std::pow(ray.direction.Dot(normale), 2));
-			if(partieSousRacine > 0)
-				compoNorm = rapportIndices*ray.direction.Dot(normale) + std::sqrt(partieSousRacine);
-			
 
-			if (partieSousRacine > 0)
+			//Coeficients de fresnel
+			double k0 = std::pow(1 - materiau.indiceRefraction, 2) / std::pow(1 + materiau.indiceRefraction, 2);
+			double R = k0 + (1 - k0)*std::pow(1 - std::abs(normale.Dot(ray.direction)), 5);
+			
+			if(!FRESNEL) R = 0;//On vire fresnel
+
+			//On tire un nombre, pour savoir si c'est transmis ou réfléchi
+			if (distrib(engine) > R)
 			{
-				nouvelleDirection = compoInc * ray.direction - compoNorm * normale;
-				Ray nvRay(pointIntersection - 0.001*normale, nouvelleDirection);
-				intensite = intensite + GetColor(nvRay, nb_rebonds-1);
+				compoInc = rapportIndices;
+				partieSousRacine = 1 - std::pow(rapportIndices, 2)*(1 - std::pow(ray.direction.Dot(normale), 2));
+				if (partieSousRacine > 0)
+					compoNorm = rapportIndices * ray.direction.Dot(normale) + std::sqrt(partieSousRacine);
+
+
+				if (partieSousRacine > 0)
+				{
+					nouvelleDirection = compoInc * ray.direction - compoNorm * normale;
+					Ray nvRay(pointIntersection - 0.001*normale, nouvelleDirection);
+					intensite = intensite + GetColor(nvRay, nb_rebonds - 1);
+				}
+				else //réflexion totale
+				{
+					Ray nouveauRayon = ray.Rebond(pointIntersection - 0.001*normale, normale);
+					intensite = intensite + GetColor(nouveauRayon, nb_rebonds - 1);
+				}
 			}
-			else //réflexion totale
+			else//réflexion totale
 			{
 				Ray nouveauRayon = ray.Rebond(pointIntersection - 0.001*normale, normale);
 				intensite = intensite + GetColor(nouveauRayon, nb_rebonds - 1);
 			}
 		}
 
+		
 		//Partie Diffuse
 
 		//Gestion de l'ombre
@@ -144,7 +163,6 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 		intensite = intensite + coefOmbre*intensiteLampe * materiau.albedo *
 			normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser())
 			/ ((positionLampe - pointIntersection).Norme2());
-		
 		
 		return intensite;
 	}
