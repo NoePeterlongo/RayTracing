@@ -5,19 +5,20 @@
 #include "triangle.h"
 #include "Polygone.h"
 #include "Materiau.h"
+#include "Lampe.h"
 
 
 
 class Scene
 {
-	Vector3 positionLampe, intensiteLampe;
-
+	
 	std::default_random_engine engine;
 	std::uniform_real_distribution<double> distrib;
 	
 public:
 	std::vector<Sphere*> spheres;
 	std::vector<Triangle*> triangles;
+	std::vector<Lampe*> lampes;
 
 	Scene();
 	~Scene();
@@ -25,7 +26,8 @@ public:
 	void AjouterSphere(Sphere *pSphere);
 	void AjouterTriangle(Triangle *pTriangle);
 	void AjouterPolygone(Polygone *pPolygone);
-	void ReglerLampe(Vector3 position, Vector3 intensite);
+	void AjouterLampe(Lampe *_lampe);
+	void AjouterLampe(Vector3 position, Vector3 intensite);
 	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pMateriau);
 	Vector3 GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds=5);
 };

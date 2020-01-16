@@ -33,10 +33,14 @@ void Scene::AjouterPolygone(Polygone *pPolygone)
 	}
 }
 
-void Scene::ReglerLampe(Vector3 position, Vector3 intensite)
+void Scene::AjouterLampe(Lampe *_lampe)
 {
-	positionLampe = position;
-	intensiteLampe = intensite;
+	lampes.push_back(_lampe);
+}
+
+void Scene::AjouterLampe(Vector3 position, Vector3 intensite)
+{
+	lampes.push_back(new Lampe(position, intensite));
 }
 
 bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pMateriau)
@@ -175,24 +179,31 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 		//Partie Diffuse simple
 		Vector3 vS = intensite;
 
-		//Gestion de l'ombre
-		bool aLOmbre = false;
-		Ray rayonOmbre(pointIntersection + 0.001*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
-
-		if (Intersect(rayonOmbre, &pointIntersectionO, &normaleIntersectionO, &materiauO))
+		
+		for (int i = 0; i < lampes.size(); i++)
 		{
-			//On regarde si l'intersection est plus proche de P que la lampe
-			if ((pointIntersectionO - pointIntersection).Norme2() < (positionLampe - pointIntersection).Norme2())
-				aLOmbre = true;
+			Vector3 positionLampe = lampes[i]->position, intensiteLampe = lampes[i]->intensite;
+			//Gestion de l'ombre
+			bool aLOmbre = false;
+
+			Ray rayonOmbre(pointIntersection + 0.001*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
+
+			if (Intersect(rayonOmbre, &pointIntersectionO, &normaleIntersectionO, &materiauO))
+			{
+				//On regarde si l'intersection est plus proche de P que la lampe
+				if ((pointIntersectionO - pointIntersection).Norme2() < (positionLampe - pointIntersection).Norme2())
+					aLOmbre = true;
+			}
+
+			double coefOmbre = aLOmbre ? 0 : 1;
+
+
+			intensite = intensite + coefOmbre * intensiteLampe * materiau.albedo *
+				std::abs(normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser()))
+				/ ((positionLampe - pointIntersection).Norme2());
 		}
 
-		double coefOmbre = aLOmbre ? 0 : 1;
-
-		double a1 = normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser());
-
-		intensite = intensite + coefOmbre*intensiteLampe * materiau.albedo *
-			std::abs(normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser()))
-			/ ((positionLampe - pointIntersection).Norme2());
+		
 		
 		return intensite;
 	}
