@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "Polygone.h"
 
+#define max(a, b) a > b ? a : b
+
 
 Polygone::Polygone(const Vector3 &_origine)
 {
 	origine = Vector3(_origine);
+	barycentre = origine;
 }
 
 
@@ -15,6 +18,8 @@ Polygone::~Polygone()
 void Polygone::AjouterFace(Triangle *pTriangle)
 {
 	faces.push_back(pTriangle);
+	CalculBarycentre();
+	CalculRayon();
 }
 
 void Polygone::SetOrigine(const Vector3 &_nouvelleOrigine)
@@ -26,6 +31,7 @@ void Polygone::SetOrigine(const Vector3 &_nouvelleOrigine)
 	{
 		faces[i]->NouvellesCoordonnees(faces[i]->A + translation, faces[i]->B + translation, faces[i]->C + translation);
 	}
+	CalculBarycentre();
 }
 
 void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau materiau)
@@ -147,6 +153,8 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				faces.push_back(pTriangle);
 			}
 		}
+		CalculBarycentre();
+		CalculRayon();
 	}
 	else
 		std::cout << "Erreur ouverture fichier " << nomFichier << std::endl;
@@ -187,4 +195,29 @@ void Polygone::Tourner(Vector3 axe, double angle)
 		nvC = origine + (faces[i]->C - origine).Dot(a)*ap + (faces[i]->C - origine).Dot(b)*bp + (faces[i]->C - origine).Dot(c)*c;
 		faces[i]->NouvellesCoordonnees(nvA, nvB, nvC);
 	}
+	CalculBarycentre();
+}
+
+void Polygone::CalculBarycentre()
+{
+	barycentre = Vector3(0, 0, 0);
+	for (int i = 0; i < faces.size(); i++)
+	{
+		barycentre = barycentre + faces[i]->A;
+		barycentre = barycentre + faces[i]->B;
+		barycentre = barycentre + faces[i]->C;
+	}
+	barycentre = barycentre / (3 * faces.size());
+}
+
+void Polygone::CalculRayon()
+{
+	rayon = 0;
+	for (int i = 0; i < faces.size(); i++)
+	{
+		rayon = max(rayon, (faces[i]->A - barycentre).Norme2());
+		rayon = max(rayon, (faces[i]->B - barycentre).Norme2());
+		rayon = max(rayon, (faces[i]->C - barycentre).Norme2());
+	}
+	rayon = std::sqrt(rayon);
 }

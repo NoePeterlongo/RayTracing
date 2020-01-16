@@ -20,17 +20,9 @@ void Scene::AjouterSphere(Sphere *pSphere)
 	spheres.push_back(pSphere);
 }
 
-void Scene::AjouterTriangle(Triangle *pTriangle)
-{
-	triangles.push_back(pTriangle);
-}
-
 void Scene::AjouterPolygone(Polygone *pPolygone)
 {
-	for (int i = 0; i < pPolygone->faces.size(); i++)
-	{
-		AjouterTriangle(pPolygone->faces[i]);
-	}
+	polygones.push_back(pPolygone);
 }
 
 void Scene::AjouterLampe(Lampe *_lampe)
@@ -65,20 +57,28 @@ bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pM
 			}
 	}
 
-	//Parcours des triangles
-	for (int i = 0; i < triangles.size(); i++)
+	//Parcours des polygones
+	for (int i = 0; i < polygones.size(); i++)
 	{
+		//Etude de la sphere du polygone
 		Vector3 _pt, _n, _a;
 		double _t;
-		if (triangles[i]->Intersect(ray, &_pt, &_n, &_t))//Contact avec le triangle
-			if (_t < t)//C'est l'objet le plus proche jusqu'ici
-			{
-				intersection = true;
-				t = _t;
-				*pPoint = _pt;
-				*pNormale = _n;
-				*pMateriau = triangles[i]->materiau;
-			}
+		bool contactAvecLaSphere = false;
+		Sphere spherePolygone(polygones[i]->barycentre, polygones[i]->rayon, NOIR);
+		if (spherePolygone.Intersect(ray, &_pt, &_n, &_t))//Contact avec la sphere
+			contactAvecLaSphere = true;
+		
+		if(contactAvecLaSphere)
+			for(int j = 0; j<polygones[i]->faces.size(); j++)
+				if (polygones[i]->faces[j]->Intersect(ray, &_pt, &_n, &_t))//Contact avec le triangle
+					if (_t < t)//C'est l'objet le plus proche jusqu'ici
+					{
+						intersection = true;
+						t = _t;
+						*pPoint = _pt;
+						*pNormale = _n;
+						*pMateriau = polygones[i]->faces[j]->materiau;
+					}
 	}
 
 	return intersection;

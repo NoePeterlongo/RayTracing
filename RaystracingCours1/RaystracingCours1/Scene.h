@@ -17,14 +17,13 @@ class Scene
 	
 public:
 	std::vector<Sphere*> spheres;
-	std::vector<Triangle*> triangles;
+	std::vector<Polygone*> polygones;
 	std::vector<Lampe*> lampes;
 
 	Scene();
 	~Scene();
 
 	void AjouterSphere(Sphere *pSphere);
-	void AjouterTriangle(Triangle *pTriangle);
 	void AjouterPolygone(Polygone *pPolygone);
 	void AjouterLampe(Lampe *_lampe);
 	void AjouterLampe(Vector3 position, Vector3 intensite);

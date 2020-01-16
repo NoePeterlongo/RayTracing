@@ -9,11 +9,13 @@
 
 class Polygone
 {
-	//void CalculBarycentre();
+	void CalculBarycentre();
+	void CalculRayon();
 public:
 	std::vector<Triangle*> faces;
 	Vector3 origine;
-	//Vector3 barycentre;
+	Vector3 barycentre;
+	double rayon;
 	Polygone(const Vector3 &_origine);
 	~Polygone();
 
