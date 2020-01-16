@@ -58,6 +58,29 @@ void Vector3::Contraindre(float min, float max)
 		z = min;
 }
 
+
+void Vector3::Tourner(Vector3 axe, double angle)
+{
+	if (angle != 0)
+	{
+		Vector3 intermediaire, e1, e2;
+		angle *= 3.14 / 180;
+		axe = axe.Normaliser();
+		if (axe == Vector3(1, 0, 0))
+			intermediaire = Vector3(0, 1, 0);
+		else
+			intermediaire = Vector3(1, 0, 0);
+		e2 = ProduitVectoriel(axe, intermediaire).Normaliser();
+		e1 = ProduitVectoriel(e2, axe);
+
+		double x1 = Dot(e1)*std::cos(angle) - Dot(e2)*std::sin(angle);
+		double x2 = Dot(e1)*std::sin(angle) + Dot(e2)*std::cos(angle);
+		double x3 = Dot(axe);
+
+		*this = x1 * e1 + x2 * e2 + x3 * axe;
+	}
+}
+
 //Opérateurs
 Vector3 operator+(const Vector3 &a, const Vector3 &b)
 {
@@ -93,4 +116,10 @@ Vector3 operator/(const Vector3 &a, const double &b)
 Vector3 ProduitVectoriel(const Vector3 &a, const Vector3 &b)
 {
 	return Vector3(a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y-a.y*b.x);
+}
+
+
+bool operator==(const Vector3 &a, const Vector3 &b)
+{
+	return a.x == b.x && a.y == b.y && a.z == b.z;
 }

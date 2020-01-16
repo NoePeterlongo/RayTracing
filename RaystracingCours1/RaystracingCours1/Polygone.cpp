@@ -169,7 +169,7 @@ void Polygone::Tourner(Vector3 axe, double angle)
 	c.Normaliser();
 
 	//cas 1 axe = (1,0,0)
-	if (c.x == 1 && c.y == 0 && c.z == 0)
+	if (c == Vector3(1,0,0))
 		a = Vector3(0, 1, 0);
 	else
 		a = ProduitVectoriel(c, Vector3(1, 0, 0)).Normaliser();

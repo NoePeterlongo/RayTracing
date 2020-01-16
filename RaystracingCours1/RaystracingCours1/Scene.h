@@ -27,6 +27,6 @@ public:
 	void AjouterPolygone(Polygone *pPolygone);
 	void ReglerLampe(Vector3 position, Vector3 intensite);
 	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pMateriau);
-	Vector3 GetColor(Ray &ray, int nb_rebonds=5);
+	Vector3 GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds=5);
 };
 

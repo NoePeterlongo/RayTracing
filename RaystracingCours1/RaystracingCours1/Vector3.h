@@ -6,6 +6,8 @@
 #define NOIR Vector3(0,0,0)
 #define BLANC Vector3(1,1,1)
 #define CYAN Vector3(0, 0.7, 0.7)
+#define ROSE Vector3(0.7, 0.4, 0.4)
+#define BLEU Vector3(0,0,0.8)
 
 
 class Vector3
@@ -22,6 +24,7 @@ public:
 	double Dot(const Vector3 &b);
 	void Puissance(double pw);
 	void Contraindre(float min, float max);
+	void Tourner(Vector3 axe, double angle);
 };
 
 Vector3 operator+(const Vector3 &a, const Vector3 &b);
@@ -30,5 +33,6 @@ Vector3 operator*(const Vector3 &a, const Vector3 &b);
 Vector3 operator*(const double &b, const Vector3 &a);
 Vector3 operator*(const Vector3 &a, const double &b);
 Vector3 operator/(const Vector3 &a, const double &b);
+bool operator==(const Vector3 &a, const Vector3 &b);
 
 Vector3 ProduitVectoriel(const Vector3 &a, const Vector3 &b);

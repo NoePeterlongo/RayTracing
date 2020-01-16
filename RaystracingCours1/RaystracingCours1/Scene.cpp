@@ -2,6 +2,7 @@
 #include "Scene.h"
 
 #define FRESNEL false
+#define ECLAIRAGE_INDIRECT true
 
 
 Scene::Scene()
@@ -79,7 +80,7 @@ bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pM
 	return intersection;
 }
 
-Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
+Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 {
 	Vector3 pointIntersection, normaleIntersection, pointIntersectionO, normaleIntersectionO;
 	Materiau materiau, materiauO;
@@ -90,7 +91,7 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 		if (materiau.spec > 0 && nb_rebonds > 0)
 		{
 			Ray nouveauRayon = ray.Rebond(pointIntersection + 0.001*normaleIntersection, normaleIntersection);//On se décale un peu de la surface
-			intensite = materiau.spec*GetColor(nouveauRayon, nb_rebonds - 1);
+			intensite = materiau.spec*GetColor(nouveauRayon, pixelStochastique, nb_rebonds - 1);
 		}
 
 		//Partie transmise//transparence
@@ -115,6 +116,7 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 			double R = k0 + (1 - k0)*std::pow(1 - std::abs(normale.Dot(ray.direction)), 5);
 			
 			if(!FRESNEL) R = 0;//On vire fresnel
+			else if (pixelStochastique != NULL) *pixelStochastique = true;
 
 			//On tire un nombre, pour savoir si c'est transmis ou réfléchi
 			if (distrib(engine) > R)
@@ -129,23 +131,49 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 				{
 					nouvelleDirection = compoInc * ray.direction - compoNorm * normale;
 					Ray nvRay(pointIntersection - 0.001*normale, nouvelleDirection);
-					intensite = intensite + GetColor(nvRay, nb_rebonds - 1);
+					intensite = intensite + GetColor(nvRay, pixelStochastique, nb_rebonds - 1);
 				}
 				else //réflexion totale
 				{
 					Ray nouveauRayon = ray.Rebond(pointIntersection - 0.001*normale, normale);
-					intensite = intensite + GetColor(nouveauRayon, nb_rebonds - 1);
+					intensite = intensite + GetColor(nouveauRayon, pixelStochastique, nb_rebonds - 1);
 				}
 			}
 			else//réflexion totale
 			{
 				Ray nouveauRayon = ray.Rebond(pointIntersection - 0.001*normale, normale);
-				intensite = intensite + GetColor(nouveauRayon, nb_rebonds - 1);
+				intensite = intensite + GetColor(nouveauRayon, pixelStochastique, nb_rebonds - 1);
 			}
 		}
 
-		
-		//Partie Diffuse
+		//Partie diffuse rebonds
+		if (materiau.coefDiffus != 0 && normaleIntersection.Dot(ray.direction) < 0 && nb_rebonds > 0 && ECLAIRAGE_INDIRECT)//On arrive de l'extérieur
+		{
+			if (pixelStochastique != NULL)
+				*pixelStochastique = true;
+
+			Vector3 e1, e2, vecteurIntermediaire;
+			if (normaleIntersection == Vector3(1,0,0))
+				vecteurIntermediaire = Vector3(0, 1, 0);
+			else
+				vecteurIntermediaire = Vector3(1, 0, 0);
+
+			e2 = ProduitVectoriel(normaleIntersection, vecteurIntermediaire).Normaliser();
+			e1 = ProduitVectoriel(e2, normaleIntersection);
+
+			double r1 = distrib(engine), r2 = distrib(engine);
+			double xd = std::cos(2 * 3.14*r1)*std::sqrt(1 - r2);
+			double yd = std::sin(2 * 3.14*r1)*std::sqrt(1 - r2);
+			double zd = std::sqrt(r2);
+
+			Vector3 nvDirection = xd * e1 + yd * e2 + zd * normaleIntersection;
+			Ray nvRay = Ray(pointIntersection + 0.001*normaleIntersection, nvDirection);
+			intensite = intensite + materiau.coefDiffus*materiau.albedo*GetColor(nvRay, pixelStochastique, std::min(1,nb_rebonds-1));
+
+		}
+
+		//Partie Diffuse simple
+		Vector3 vS = intensite;
 
 		//Gestion de l'ombre
 		bool aLOmbre = false;
@@ -158,10 +186,12 @@ Vector3 Scene::GetColor(Ray &ray, int nb_rebonds)
 				aLOmbre = true;
 		}
 
-		double coefOmbre = aLOmbre ? 0.05 : 1;
+		double coefOmbre = aLOmbre ? 0 : 1;
+
+		double a1 = normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser());
 
 		intensite = intensite + coefOmbre*intensiteLampe * materiau.albedo *
-			normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser())
+			std::abs(normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser()))
 			/ ((positionLampe - pointIntersection).Norme2());
 		
 		return intensite;
