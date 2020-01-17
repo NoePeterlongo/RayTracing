@@ -2,7 +2,7 @@
 #include "Scene.h"
 
 #define FRESNEL false
-#define ECLAIRAGE_INDIRECT true
+#define ECLAIRAGE_INDIRECT false
 
 
 Scene::Scene()

@@ -25,6 +25,8 @@ public:
 	void Puissance(double pw);
 	void Contraindre(float min, float max);
 	void Tourner(Vector3 axe, double angle);
+
+	Vector3 & operator+=(const Vector3 &a);
 };
 
 Vector3 operator+(const Vector3 &a, const Vector3 &b);
