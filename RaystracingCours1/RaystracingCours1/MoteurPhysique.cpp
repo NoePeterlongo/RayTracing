@@ -23,41 +23,21 @@ void MoteurPhysique::DeplacerSpheres()
 			*(spheres[i].pPosition) += spheres[i].vitesse*dt;
 }
 
-void MoteurPhysique::AppliquerGravite()
-{
-	for (int i = 0; i < spheres.size(); i++)
-		if (!spheres[i].fixe && spheres[i].collisionsEnCours.size() == 0)//Deuxième condition provisoire
-			spheres[i].vitesse.y -= g * dt;
-}
-
-void MoteurPhysique::GererCollisions()
-{
-	for (int i = 0; i < spheres.size(); i++)
-		if (!spheres[i].fixe)
-		{
-			for(int j = 0; j<spheres.size(); j++)
-				if (i != j)
-				{
-					if (spheres[i].EntreEnCollisionAvec(&spheres[j]))
-					{
-						//Contact avec Sphere fixe
-						if (spheres[j].fixe)
-						{
-							Vector3 normale = (*(spheres[i].pPosition) - *(spheres[j].pPosition)).Normaliser();
-							spheres[i].vitesse = spheres[i].vitesse - 2 * (spheres[i].bounciness + spheres[j].bounciness)*normale.Dot(spheres[i].vitesse)*normale;
-						}
-					}
-				}
-			//spheres[i].LibererCollisions();
-		}
-}
 
 void MoteurPhysique::Update(double duree)
 {
-	for (int i = 0; i < (int)(duree / dt); i++)
+	for (int nt = 0; nt < (int)(duree / dt); nt++)
 	{
-		AppliquerGravite();
-		GererCollisions();
+		for (int i = 0; i < spheres.size(); i++)
+			if (!spheres[i].fixe)
+			{
+				Vector3 force = Vector3(0, -g*spheres[i].masse, 0);
+				for (int j = 0; j < spheres.size(); j++)
+					if (i != j)
+						force += spheres[i].ForceSubieDe(spheres[j]);
+				spheres[i].vitesse += dt * force / spheres[i].masse;
+			}
+
 		DeplacerSpheres();
 	}
 }

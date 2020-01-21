@@ -9,6 +9,8 @@
 #define ROSE Vector3(0.7, 0.4, 0.4)
 #define BLEU Vector3(0,0,0.8)
 
+#define VECTEUR_NUL Vector3(0,0,0)
+
 
 class Vector3
 {

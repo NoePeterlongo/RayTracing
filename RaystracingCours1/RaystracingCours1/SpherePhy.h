@@ -11,12 +11,9 @@ public:
 	Vector3 vitesse;
 	double rayon, bounciness, amorti, masse;
 	bool fixe;
-	std::vector<SpherePhy*> collisionsEnCours;
-	SpherePhy(Sphere *_sphere, double _bounciness = 0, bool _fixe = true, double _amorti = 0.5, Vector3 _vitesse = NOIR);
+	SpherePhy(Sphere *_sphere, double _bounciness = 1, bool _fixe = true, double _amorti = 0.5, Vector3 _vitesse = VECTEUR_NUL);
 	~SpherePhy();
-	void LibererCollisions();//vide le tableau collisionEnCours
-	bool EstEnCollisionAvec(const SpherePhy &_sphere);
-	bool EtaitDejaEnCollisionAvec(const SpherePhy &_sphere);
-	bool EntreEnCollisionAvec(SpherePhy *_sphere);
+
+	Vector3 ForceSubieDe(const SpherePhy &_sphere);
 };
 

@@ -5,15 +5,13 @@
 #include "SpherePhy.h"
 
 #define g 9.81
-#define dt 0.01
+#define dt 0.005
 
 class MoteurPhysique
 {
 	std::vector<SpherePhy> spheres;
 
 	void DeplacerSpheres();
-	void AppliquerGravite();
-	void GererCollisions();
 public:
 	MoteurPhysique();
 	~MoteurPhysique();

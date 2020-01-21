@@ -10,7 +10,7 @@ SpherePhy::SpherePhy(Sphere *_sphere, double _bounciness, bool _fixe,
 	bounciness = _bounciness;
 	amorti = _amorti;
 	fixe = _fixe;
-	masse = 50 * 4 * 3.14*std::pow(rayon, 3) / 3;
+	masse = 5 * 4 * 3.14*std::pow(rayon, 3) / 3;
 }
 
 
@@ -18,37 +18,18 @@ SpherePhy::~SpherePhy()
 {
 }
 
-bool SpherePhy::EstEnCollisionAvec(const SpherePhy &_sphere)
+Vector3 SpherePhy::ForceSubieDe(const SpherePhy &_sphere)
 {
-	return (*(_sphere.pPosition) - *pPosition).Norme2() <= std::pow(_sphere.rayon + rayon, 2);
-}
+	Vector3 centreACentre = *pPosition - *(_sphere.pPosition);
+	double distanceSpheres = std::sqrt(centreACentre.Norme2()) - rayon - _sphere.rayon;
 
-void SpherePhy::LibererCollisions()
-{
-	for (int i = 0; i < collisionsEnCours.size(); i++)
+	if (distanceSpheres > 0)
+		return VECTEUR_NUL;
+	else
 	{
-		if (!EstEnCollisionAvec(*collisionsEnCours[i]))
-			collisionsEnCours.erase(collisionsEnCours.begin() + i);
+		double coefAmorti = (_sphere.vitesse - vitesse).Dot(centreACentre) > 0 ? 1 : bounciness;
+		double intensite = coefAmorti*std::exp(-distanceSpheres*20);
+		return centreACentre.Normaliser()*intensite;
 	}
-}
-
-bool SpherePhy::EtaitDejaEnCollisionAvec(const SpherePhy &_sphere)
-{
-	for (int i = 0; i < collisionsEnCours.size(); i++)
-	{
-		if (collisionsEnCours[i]->pPosition == _sphere.pPosition)
-			return true;
-	}
-}
-
-bool SpherePhy::EntreEnCollisionAvec(SpherePhy *_sphere)
-{
-	if(!EtaitDejaEnCollisionAvec(*_sphere))
-		if (EstEnCollisionAvec(*_sphere))
-		{
-			collisionsEnCours.push_back(_sphere);
-			return true;
-		}
-	return false;
 }
 
