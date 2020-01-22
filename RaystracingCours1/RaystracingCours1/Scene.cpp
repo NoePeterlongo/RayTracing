@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Scene.h"
 
 
@@ -92,7 +92,7 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 		//Partie speculaire
 		if (materiau.spec > 0 && nb_rebonds > 0)
 		{
-			Ray nouveauRayon = ray.Rebond(pointIntersection + 0.001*normaleIntersection, normaleIntersection);//On se décale un peu de la surface
+			Ray nouveauRayon = ray.Rebond(pointIntersection + 0.001*normaleIntersection, normaleIntersection);//On se dÃ©cale un peu de la surface
 			intensite = materiau.spec*GetColor(nouveauRayon, pixelStochastique, nb_rebonds - 1);
 		}
 
@@ -120,7 +120,7 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 			if(!FRESNEL) R = 0;//On vire fresnel
 			else if (pixelStochastique != NULL) *pixelStochastique = true;
 
-			//On tire un nombre, pour savoir si c'est transmis ou réfléchi
+			//On tire un nombre, pour savoir si c'est transmis ou rÃ©flÃ©chi
 			if (distrib(engine) > R)
 			{
 				compoInc = rapportIndices;
@@ -135,13 +135,13 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 					Ray nvRay(pointIntersection - 0.001*normale, nouvelleDirection);
 					intensite = intensite + GetColor(nvRay, pixelStochastique, nb_rebonds - 1);
 				}
-				else //réflexion totale
+				else //rÃ©flexion totale
 				{
 					Ray nouveauRayon = ray.Rebond(pointIntersection - 0.001*normale, normale);
 					intensite = intensite + GetColor(nouveauRayon, pixelStochastique, nb_rebonds - 1);
 				}
 			}
-			else//réflexion totale
+			else//rÃ©flexion totale
 			{
 				Ray nouveauRayon = ray.Rebond(pointIntersection - 0.001*normale, normale);
 				intensite = intensite + GetColor(nouveauRayon, pixelStochastique, nb_rebonds - 1);
@@ -149,7 +149,7 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 		}
 
 		//Partie diffuse rebonds
-		if (materiau.coefDiffus != 0 && normaleIntersection.Dot(ray.direction) < 0 && nb_rebonds > 0 && ECLAIRAGE_INDIRECT)//On arrive de l'extérieur
+		if (materiau.coefDiffus != 0 && normaleIntersection.Dot(ray.direction) < 0 && nb_rebonds > 0 && ECLAIRAGE_INDIRECT)//On arrive de l'extÃ©rieur
 		{
 			if (pixelStochastique != NULL)
 				*pixelStochastique = true;

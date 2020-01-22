@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "triangle.h"
 
 
@@ -39,7 +39,7 @@ Triangle::~Triangle()
 bool Triangle::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt)
 {
 	//Etude du plan
-	//Première condition, rayon non parallèle au plan
+	//PremiÃ¨re condition, rayon non parallÃ¨le au plan
 	if (ray.direction.Dot(n) == 0)
 		return false;
 

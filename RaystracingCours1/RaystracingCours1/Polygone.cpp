@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Polygone.h"
 
 #define max(a, b) a > b ? a : b
@@ -45,7 +45,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 		{
 			std::size_t debut, fin;
 			std::size_t found = ligne.find(std::string("outer loop"));
-			if (found != std::string::npos)//Entrée dans un triangle
+			if (found != std::string::npos)//EntrÃ©e dans un triangle
 			{
 				double x, y, z;
 				//Point A
@@ -58,7 +58,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				fin = ligne.find(" ", 1);
 				chaineNombre = ligne.substr(debut, fin - debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				x = strToDouble(chaineNombre);
 
@@ -67,7 +67,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				fin = ligne.find(" ", debut+1);
 				chaineNombre = ligne.substr(debut, fin - debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				y = strToDouble(chaineNombre);
 
@@ -75,7 +75,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				debut = fin + 1;
 				chaineNombre = ligne.substr(debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				z = strToDouble(chaineNombre);
 
@@ -92,7 +92,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				fin = ligne.find(" ", 1);
 				chaineNombre = ligne.substr(debut, fin - debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				x = strToDouble(chaineNombre);
 
@@ -101,7 +101,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				fin = ligne.find(" ", debut + 1);
 				chaineNombre = ligne.substr(debut, fin - debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				y = strToDouble(chaineNombre);
 
@@ -109,7 +109,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				debut = fin + 1;
 				chaineNombre = ligne.substr(debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				z = strToDouble(chaineNombre);
 
@@ -125,7 +125,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				fin = ligne.find(" ", 1);
 				chaineNombre = ligne.substr(debut, fin - debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				x = strToDouble(chaineNombre);
 
@@ -134,7 +134,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				fin = ligne.find(" ", debut + 1);
 				chaineNombre = ligne.substr(debut, fin - debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				y = strToDouble(chaineNombre);
 
@@ -142,7 +142,7 @@ void Polygone::ChargerFichier(const char *nomFichier, double ratio, Materiau mat
 				debut = fin + 1;
 				chaineNombre = ligne.substr(debut);
 				found = chaineNombre.find(" ");
-				if (found == 0)//nombre positif, et on enlève l'espace
+				if (found == 0)//nombre positif, et on enlÃ¨ve l'espace
 					chaineNombre = chaineNombre.substr(1);
 				z = strToDouble(chaineNombre);
 
@@ -189,7 +189,7 @@ void Polygone::Tourner(Vector3 axe, double angle)
 
 	for (int i = 0; i < faces.size(); i++)
 	{
-		Vector3 nvA, nvB, nvC;//Pas les mêmes A, B, C que les axes
+		Vector3 nvA, nvB, nvC;//Pas les mÃªmes A, B, C que les axes
 		nvA = origine + (faces[i]->A - origine).Dot(a)*ap + (faces[i]->A - origine).Dot(b)*bp + (faces[i]->A - origine).Dot(c)*c;
 		nvB = origine + (faces[i]->B - origine).Dot(a)*ap + (faces[i]->B - origine).Dot(b)*bp + (faces[i]->B - origine).Dot(c)*c;
 		nvC = origine + (faces[i]->C - origine).Dot(a)*ap + (faces[i]->C - origine).Dot(b)*bp + (faces[i]->C - origine).Dot(c)*c;

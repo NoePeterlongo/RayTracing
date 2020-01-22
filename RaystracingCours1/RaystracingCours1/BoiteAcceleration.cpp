@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "BoiteAcceleration.h"
 
 
@@ -17,7 +17,7 @@ BoiteAcceleration::BoiteAcceleration(Vector3 pointMin, double largeur)
 	xmin = pointMin.x; ymin = pointMin.y; zmin = pointMin.z;
 	xmax = xmin + largeur; ymax = ymin + largeur; zmax = zmin + largeur;
 
-	//Création des plans
+	//CrÃ©ation des plans
 	Vector3 vx = Vector3(1, 0, 0)*largeur, vy = Vector3(0, 1, 0)*largeur, vz = Vector3(0, 0, 1)*largeur;
 
 	Vector3 A = pointMin, B = A + vx, C = A + vx + vy, D = A + vy, E = A + vz, F = B + vz, G = C + vz, H = D + vz;
@@ -50,10 +50,10 @@ bool BoiteAcceleration::Intersect(Ray &rayon)
 }
 
 
-//vrai si on arrive face à la normale
+//vrai si on arrive face Ã  la normale
 bool IntersectionAvecPlan(Ray &ray, Plan &plan, Vector3 &_pointIntersection)
 {
-	//Première condition, rayon non parallèle au plan, et on arrive face à la normale
+	//PremiÃ¨re condition, rayon non parallÃ¨le au plan, et on arrive face Ã  la normale
 	if (ray.direction.Dot(plan.n) >= 0)
 		return false;
 
