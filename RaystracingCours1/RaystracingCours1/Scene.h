@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <random>
+#include "Parametres.h"
 #include "Sphere.h"
 #include "triangle.h"
 #include "Polygone.h"

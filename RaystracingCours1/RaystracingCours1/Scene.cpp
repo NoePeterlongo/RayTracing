@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "Scene.h"
 
-#define FRESNEL false
-#define ECLAIRAGE_INDIRECT false
 
 
 Scene::Scene()

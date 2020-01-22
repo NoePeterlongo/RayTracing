@@ -157,6 +157,7 @@
     <ClInclude Include="Lampe.h" />
     <ClInclude Include="Materiau.h" />
     <ClInclude Include="MoteurPhysique.h" />
+    <ClInclude Include="Parametres.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Polygone.h" />
     <ClInclude Include="Ray.h" />
