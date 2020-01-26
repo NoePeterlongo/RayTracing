@@ -49,6 +49,26 @@ bool BoiteAcceleration::Intersect(Ray &rayon)
 	return false;
 }
 
+bool BoiteAcceleration::MettreTriangle(Triangle *pTriangle)
+{
+	Vector3 point = pTriangle->A;
+	if (!(point.x > xmin - 0.01 && point.x < xmax + 0.01 &&
+		point.y > ymin - 0.01 && point.y < ymax + 0.01 &&
+		point.z > zmin - 0.01 && point.z < zmax + 0.01))
+		return false;
+	point = pTriangle->B;
+	if (!(point.x > xmin - 0.01 && point.x < xmax + 0.01 &&
+		point.y > ymin - 0.01 && point.y < ymax + 0.01 &&
+		point.z > zmin - 0.01 && point.z < zmax + 0.01))
+		return false;
+	point = pTriangle->C;
+	if (!(point.x > xmin - 0.01 && point.x < xmax + 0.01 &&
+		point.y > ymin - 0.01 && point.y < ymax + 0.01 &&
+		point.z > zmin - 0.01 && point.z < zmax + 0.01))
+		return false;
+	triangles.push_back(pTriangle);
+	return true;
+}
 
 //vrai si on arrive face à la normale
 bool IntersectionAvecPlan(Ray &ray, Plan &plan, Vector3 &_pointIntersection)

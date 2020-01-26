@@ -23,7 +23,9 @@
 #include "Polygone.h"
 #include "Scene.h"
 #include "MoteurPhysique.h"
+#include "Polyedre.h"
 
+int nbThreadsFinis = 0;
 
 
 void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, int iMax, int jMin, int jMax, 
@@ -92,14 +94,15 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 			image[(i*W + j) * 3 + 2] = couleur.z;
 		}
 	}
+	std::cout << (int)(100 * (double)(nbThreadsFinis++) / NB_THREADS)<< "%" << std::endl;
 }
 
 int main() {
 
-	Vector3 positionCamera(-9, 5, 9);
-	Vector3 rotationCamera(0, -45, 0);
+	Vector3 positionCamera(0, 5, 9);
+	Vector3 rotationCamera(0, -20, 0);
 
-	double FOV = 60*3.14/180;
+	double FOV = 70*3.14/180;
 
 	Vector3 positionLampe(5, 9, 9);
 	Vector3 intensiteLampe(5e7, 5e7, 5e7);
@@ -108,18 +111,6 @@ int main() {
 	scene.AjouterLampe(positionLampe, intensiteLampe);
 	scene.AjouterLampe(Vector3(-5, 9, 0), Vector3(1e7, 1e7, 1e7));
 
-	/*
-	Sphere sphere1(Vector3(3, 4, -5), 1, NOIR);
-	//Sphere sphere1(Vector3(0, 1, -5), 0.5, NOIR);
-	sphere1.materiau.spec = 0.5;
-	sphere1.materiau.coefDiffus = 0;
-	Sphere sphere2(Vector3(3, 1, -7), 1, Vector3(0.7, 0, 0.7));
-	Sphere sphere3(Vector3(-2, 1, -3), 0.3, Materiau(NOIR, 0, true, 1.3));
-	Sphere sphere4(Vector3(0.1, 0.5, 1), 0.3, Materiau(Vector3(0.3,0.3,0.4), 0.1, false, 0, 1));
-	Sphere sol(Vector3(0, -10000, -5), 10000, VERT);
-	Sphere murFace(Vector3(0, 0, -10010), 9999, Vector3(0.5, 0.4, 0.3));
-	Sphere murGauche(Vector3(-10005, 0, 0), 9999, Vector3(0.7, 0.7, 0.7));
-	Sphere murDroit(Vector3(10010, 0, 0), 9999, Vector3(0.7, 0.3, 0.7));*/
 
 	Sphere murDroit(Vector3(1000, 0, 0), 990, Materiau(ROUGE, 0, false, 0, 0.5));
 	Sphere murGauche(Vector3(-1000, 0, 0), 990, VERT);
@@ -156,58 +147,28 @@ int main() {
 	moteur.AjouterSphere(&murDerriere);
 	moteur.AjouterSphere(&murGauche);
 
-	//Maison
-	{
-		Triangle mMurFace1(Vector3(-1, 0, 1), Vector3(1, 0, 1), Vector3(-1, 2, 1), GRIS);
-		Triangle mMurFace2(Vector3(1, 0, 1), Vector3(-1, 2, 1), Vector3(1, 2, 1), GRIS);
-		Triangle mMurDroit1(Vector3(1, 0, 1), Vector3(1, 0, -1), Vector3(1, 2, 1), GRIS);
-		Triangle mMurDroit2(Vector3(1, 2, -1), Vector3(1, 0, -1), Vector3(1, 2, 1), GRIS);
-		Triangle mMurGauche1(Vector3(-1, 0, 1), Vector3(-1, 0, -1), Vector3(-1, 2, 1), GRIS);
-		Triangle mMurGauche2(Vector3(-1, 2, -1), Vector3(-1, 0, -1), Vector3(-1, 2, 1), GRIS);
-		Triangle mToitDevant(Vector3(0, 3, 0), Vector3(-1.2, 1.8, 1.2), Vector3(1.2, 1.8, 1.2), ROUGE);
-		Triangle mToitDroit(Vector3(0, 3, 0), Vector3(1.2, 1.8, 1.2), Vector3(1.2, 1.8, -1.2), ROUGE);
-		Triangle mToitGauche(Vector3(0, 3, 0), Vector3(-1.2, 1.8, 1.2), Vector3(-1.2, 1.8, -1.2), ROUGE);
-		Triangle mToitDerriere(Vector3(0, 3, 0), Vector3(-1.2, 1.8, -1.2), Vector3(1.2, 1.8, -1.2), ROUGE);
-
-
-		Polygone maison(Vector3(0, 0, 0));
-		maison.AjouterFace(&mMurFace1);
-		maison.AjouterFace(&mMurFace2);
-		maison.AjouterFace(&mMurDroit1);
-		maison.AjouterFace(&mMurDroit2);
-		maison.AjouterFace(&mMurGauche1);
-		maison.AjouterFace(&mMurGauche2);
-		maison.AjouterFace(&mToitDevant);
-		maison.AjouterFace(&mToitDroit);
-		maison.AjouterFace(&mToitGauche);
-		maison.AjouterFace(&mToitDerriere);
-
-		maison.SetOrigine(Vector3(-1.5, 0, -2));
-	}
-
+/*
 	Polygone bulbasaur(Vector3(3, 1.3, 0));
 	bulbasaur.ChargerFichier("CE3_bulbasaur_starter_1gen_flowalistik.stl", 0.07, Materiau(Vector3(0,0.1,0.03), 0.1));
+
+
+	Polyedre bulbasaur2(2);
+	bulbasaur2.LireSTL("CE3_bulbasaur_starter_1gen_flowalistik.stl", 0.07, Vector3(3, 1.3, 0), Materiau(Vector3(0, 0.1, 0.03), 0.1));
+	*/
+	Polygone model2(Vector3(3, 1.3, 0));
+	model2.ChargerFichier("chateau4.6.1.stl", 0.07, Materiau(Vector3(0, 0.1, 0.03), 0.1));
+
+	Polyedre model2V2(7);
+	model2V2.LireSTL("chateau4.6.1.stl", 0.07, Vector3(3, 4, 1), Materiau(Vector3(0.01, 0.01, 0.01), 0.01));
+
 	//poly2.Tourner(Vector3(0, 1, 0), 90);
-	scene.AjouterPolygone(&bulbasaur);
-
-	/*
-	scene.AjouterSphere(&sphere1);
-	scene.AjouterSphere(&sphere2);
-	scene.AjouterSphere(&sphere3);
-	scene.AjouterSphere(&sphere4);
-	scene.AjouterSphere(&sol);
-	//scene.AjouterSphere(&murFace);
-	scene.AjouterSphere(&murGauche);
-	scene.AjouterSphere(&murDroit);
-
-	//scene.AjouterTriangle(&triangle1);
-	//scene.AjouterTriangle(&triangle2);
-	//scene.AjouterPolygone(&poly);
-	//scene.AjouterPolygone(&maison);
-	//scene.AjouterPolygone(&poly2);*/
+	//scene.AjouterPolygone(&bulbasaur);
+	//scene.AjouterPolyedre(&bulbasaur2);
+	//scene.AjouterPolygone(&model2);
+	scene.AjouterPolyedre(&model2V2);
 
 
-	int W = 800;
+	int W = 512;
 	int H = 512;
 	double d = W / (2 * std::tan(FOV / 2));
 	std::vector<unsigned char> image(W*H * 3, 0);
@@ -219,22 +180,30 @@ int main() {
 
 	for (int iAnimation = 0; iAnimation < 1; iAnimation++)
 	{
+		/*
 		moteur.Update(0.5);
 
 		positionCamera.z = 9 - 18 * (float)iAnimation / 200;
 
 		Vector3 front = sphDiff.centre - positionCamera;
-		rotationCamera.y = std::atan2(-front.z, front.x)*180/3.14 - 90;
+		rotationCamera.y = std::atan2(-front.z, front.x)*180/3.14 - 90;*/
 
 		auto start = std::chrono::high_resolution_clock::now();
-		std::thread thread1(CalculerImage, std::ref(image), H, W, 0, H/2, 0, W/2, std::ref(positionCamera), std::ref(rotationCamera), d, std::ref(scene), NB_RAYONS_PAR_PIXEL);
+
+		std::vector<std::thread> threads;
+		for (int i = 0; i < NB_THREADS; i++)
+			threads.push_back(std::thread(CalculerImage, std::ref(image), H, W, H*(double)i / NB_THREADS, H*(double)(i + 1) / NB_THREADS, 0, W, std::ref(positionCamera), std::ref(rotationCamera), d, std::ref(scene), NB_RAYONS_PAR_PIXEL));
+		for (int i = 0; i < NB_THREADS; i++)
+				threads[i].join();
+
+		/*std::thread thread1(CalculerImage, std::ref(image), H, W, 0, H/2, 0, W/2, std::ref(positionCamera), std::ref(rotationCamera), d, std::ref(scene), NB_RAYONS_PAR_PIXEL);
 		std::thread thread2(CalculerImage, std::ref(image), H, W, H/2, H, 0, W/2, std::ref(positionCamera), std::ref(rotationCamera), d, std::ref(scene), NB_RAYONS_PAR_PIXEL);
 		std::thread thread3(CalculerImage, std::ref(image), H, W, 0, H / 2, W/2, W, std::ref(positionCamera), std::ref(rotationCamera), d, std::ref(scene), NB_RAYONS_PAR_PIXEL);
 		std::thread thread4(CalculerImage, std::ref(image), H, W, H / 2, H, W/2, W, std::ref(positionCamera), std::ref(rotationCamera), d, std::ref(scene), NB_RAYONS_PAR_PIXEL);
 		thread1.join();
 		thread2.join();
 		thread3.join();
-		thread4.join();
+		thread4.join();*/
 
 		//CalculerImage(image, H, W, 0, H, 0, W, positionCamera, d, scene, nbRayons);
 		auto finish = std::chrono::high_resolution_clock::now();

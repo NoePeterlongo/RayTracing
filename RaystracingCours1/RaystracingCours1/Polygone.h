@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cmath>
 #include "Vector3.h"
 #include "triangle.h"
 

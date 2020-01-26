@@ -23,6 +23,11 @@ void Scene::AjouterPolygone(Polygone *pPolygone)
 	polygones.push_back(pPolygone);
 }
 
+void Scene::AjouterPolyedre(Polyedre *pPolyedre)
+{
+	polyedres.push_back(pPolyedre);
+}
+
 void Scene::AjouterLampe(Lampe *_lampe)
 {
 	lampes.push_back(_lampe);
@@ -35,14 +40,14 @@ void Scene::AjouterLampe(Vector3 position, Vector3 intensite)
 
 bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pMateriau)
 {
-	Vector3 point, normale, albedo;
+	Vector3 point, normale;
 	bool intersection = false;
 	double t = 1e10;//Grand
 
 	//Parcours des spheres
 	for (int i = 0; i < spheres.size(); i++)
 	{
-		Vector3 _pt, _n, _a;
+		Vector3 _pt, _n;
 		double _t;
 		if(spheres[i]->Intersect(ray, &_pt, &_n, &_t))//Contact avec la sphere
 			if (_t < t)//C'est la sphere la plus proche jusqu'ici
@@ -59,7 +64,7 @@ bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pM
 	for (int i = 0; i < polygones.size(); i++)
 	{
 		//Etude de la sphere du polygone
-		Vector3 _pt, _n, _a;
+		Vector3 _pt, _n;
 		double _t;
 		bool contactAvecLaSphere = false;
 		Sphere spherePolygone(polygones[i]->barycentre, polygones[i]->rayon, NOIR);
@@ -77,6 +82,23 @@ bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pM
 						*pNormale = _n;
 						*pMateriau = polygones[i]->faces[j]->materiau;
 					}
+	}
+
+	//Parcours des polyedres
+	for (int i = 0; i < polyedres.size(); i++)
+	{
+		Vector3 _pt, _n;
+		double _t;
+		Materiau materiau;
+		if(polyedres[i]->Intersect(ray, &_pt, &_n, &_t, &materiau))
+			if (_t < t)
+			{
+				intersection = true;
+				t = _t;
+				*pPoint = _pt;
+				*pNormale = _n;
+				*pMateriau = materiau;
+			}
 	}
 
 	return intersection;

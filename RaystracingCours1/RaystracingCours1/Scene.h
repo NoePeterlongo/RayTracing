@@ -7,6 +7,7 @@
 #include "Polygone.h"
 #include "Materiau.h"
 #include "Lampe.h"
+#include "Polyedre.h"
 
 
 
@@ -19,6 +20,7 @@ class Scene
 public:
 	std::vector<Sphere*> spheres;
 	std::vector<Polygone*> polygones;
+	std::vector<Polyedre*> polyedres;
 	std::vector<Lampe*> lampes;
 
 	Scene();
@@ -26,6 +28,7 @@ public:
 
 	void AjouterSphere(Sphere *pSphere);
 	void AjouterPolygone(Polygone *pPolygone);
+	void AjouterPolyedre(Polyedre *pPolyedre);
 	void AjouterLampe(Lampe *_lampe);
 	void AjouterLampe(Vector3 position, Vector3 intensite);
 	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pMateriau);
