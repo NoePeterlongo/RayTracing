@@ -6,6 +6,7 @@
 #include <iostream>
 #include "triangle.h"
 #include "BoiteAcceleration.h"
+#include "ChargementOBJ.h"
 
 //Cette classe doit remplacer la classe polygones
 class Polyedre
@@ -24,6 +25,7 @@ public:
 	~Polyedre();
 
 	void LireSTL(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau);
+	void LireOBJ(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau, bool fichiersTexture, std::vector<const char*>nomsTextures);
 	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt, Materiau *materiau);
 	
 

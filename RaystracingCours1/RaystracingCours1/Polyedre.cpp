@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Polyedre.h"
+#define max(a, b) a>b?a:b
 
 
 Polyedre::Polyedre()
@@ -25,7 +26,7 @@ void Polyedre::MiseAJourBoites()
 
 	//Création de la boite principale
 	Vector3 ptMin = triangles[0]->A;
-	double cote = 0;
+	double xmax=-1e20, ymax=-1e20, zmax=-1e20;
 	for (int i = 0; i < triangles.size(); i++)
 	{
 		for (int j = 0; j < 3; j++)
@@ -41,12 +42,13 @@ void Polyedre::MiseAJourBoites()
 			if (pt.z < ptMin.z)
 				ptMin.z = pt.z;
 
-			//Mise à jour du côté du cube principal
-			if (pt.x > ptMin.x + cote) cote = pt.x - ptMin.x;
-			if (pt.y > ptMin.y + cote) cote = pt.y - ptMin.y;
-			if (pt.z > ptMin.z + cote) cote = pt.z - ptMin.z;
+			if (pt.x > xmax)xmax = pt.x;
+			if (pt.y > ymax)ymax = pt.y;
+			if (pt.z > zmax)zmax = pt.z;
 		}
 	}
+	double cote = max(xmax - ptMin.x, ymax - ptMin.y);
+	cote = max(cote, zmax - ptMin.z);
 	boitePrincipale = BoiteAcceleration(ptMin, cote);
 
 	//Creation des petites boites
@@ -212,12 +214,55 @@ void Polyedre::LireSTL(const char *nomFichier, double ratio, Vector3 origine, Ma
 		std::cout << "Erreur ouverture fichier " << nomFichier << std::endl;
 }
 
+
+
 double Polyedre::strToDouble(std::string chaine)
 {
 	std::istringstream os(chaine);
 	double d;
 	os >> d;
 	return d;
+}
+
+
+void Polyedre::LireOBJ(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau, bool fichiersTexture, std::vector<const char*>nomsTextures)
+{
+	Geometry geo(nomFichier, ratio, origine);
+
+	if (fichiersTexture)
+	{
+		for (int i = 0; i<nomsTextures.size(); i++) geo.add_texture(nomsTextures[i]);
+	}
+	
+	
+	for (int i = 0; i < geo.indices.size(); i++)
+	{
+		if (fichiersTexture)
+		{
+			int faceGroup = geo.indices[i].faceGroup;
+			if (faceGroup < geo.textures.size())
+			{
+				double R, G, B;
+				int x, y;
+				x = geo.w[faceGroup] * geo.uvs[geo.indices[i].uvi][0];
+				y = geo.h[faceGroup] * geo.uvs[geo.indices[i].uvi][1];
+				R = geo.textures[faceGroup][(geo.w[faceGroup] * y + x) * 3];
+				G = geo.textures[faceGroup][(geo.w[faceGroup] * y + x) * 3 + 1];
+				B = geo.textures[faceGroup][(geo.w[faceGroup] * y + x) * 3 + 2];
+				//Materiau mat(Vector3(geo.textures[0][geo.indices[i].uvi], geo.textures[0][geo.indices[i].uvj], geo.textures[0][geo.indices[i].uvk])/1024);
+				Materiau mat(Vector3(R, G, B) / 800);
+				Triangle *pTriangle = new Triangle(geo.vertices[geo.indices[i].vtxi], geo.vertices[geo.indices[i].vtxj], geo.vertices[geo.indices[i].vtxk], mat);
+				triangles.push_back(pTriangle);
+			}
+		}
+		else
+		{
+			Triangle *pTriangle = new Triangle(geo.vertices[geo.indices[i].vtxi], geo.vertices[geo.indices[i].vtxj], geo.vertices[geo.indices[i].vtxk], materiau);
+			triangles.push_back(pTriangle);
+		}
+		
+	}
+	MiseAJourBoites();
 }
 
 bool Polyedre::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt, Materiau *materiau)

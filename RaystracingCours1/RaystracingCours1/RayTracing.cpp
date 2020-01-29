@@ -127,12 +127,12 @@ int main() {
 	scene.AjouterSphere(&murDerriere);
 
 	Sphere sphMiroir(Vector3(6, 5, -3), 2, Materiau(NOIR, 1));
-	scene.AjouterSphere(&sphMiroir);
+	//scene.AjouterSphere(&sphMiroir);
 	Sphere sphTransparente(Vector3(1, 8, -4), 2, Materiau(NOIR, 0.001, true, 1.3));
 	scene.AjouterSphere(&sphTransparente);
-	Sphere sphDiff(Vector3(8, 8, -0), 2, Materiau(GRIS*0.5, 0, false, 0, 3));
+	Sphere sphDiff(Vector3(8, 8, -0), 2, Materiau(GRIS*0.5, 0, false, 0, 1));
 	scene.AjouterSphere(&sphDiff);
-	Sphere perc(Vector3(0, 0.6, 0), 1, Materiau(ROUGE, 0.02));
+	Sphere perc(Vector3(1, 0.6, -2), 1, Materiau(ROUGE, 0.02));
 	scene.AjouterSphere(&perc);
 
 	MoteurPhysique moteur;
@@ -156,17 +156,27 @@ int main() {
 	bulbasaur2.LireSTL("CE3_bulbasaur_starter_1gen_flowalistik.stl", 0.07, Vector3(3, 1.3, 0), Materiau(Vector3(0, 0.1, 0.03), 0.1));
 	*/
 	Polygone model2(Vector3(3, 1.3, 0));
-	model2.ChargerFichier("chateau4.6.1.stl", 0.07, Materiau(Vector3(0, 0.1, 0.03), 0.1));
+	//model2.ChargerFichier("chateau4.6.1.stl", 0.07, Materiau(Vector3(0, 0.1, 0.03), 0.1));
 
 	Polyedre model2V2(7);
-	model2V2.LireSTL("chateau4.6.1.stl", 0.07, Vector3(3, 4, 1), Materiau(Vector3(0.01, 0.01, 0.01), 0.01));
+	//model2V2.LireSTL("chateau4.6.1.stl", 0.07, Vector3(3, 4, 1), Materiau(Vector3(0.01, 0.01, 0.01), 0.01));
 
 	//poly2.Tourner(Vector3(0, 1, 0), 90);
 	//scene.AjouterPolygone(&bulbasaur);
 	//scene.AjouterPolyedre(&bulbasaur2);
 	//scene.AjouterPolygone(&model2);
-	scene.AjouterPolyedre(&model2V2);
+	//scene.AjouterPolyedre(&model2V2);
 
+	Polyedre modelOBJ(7);
+	std::vector<const char*> nomsTextures;
+	nomsTextures.push_back("12c14c70.bmp");
+	nomsTextures.push_back("13932ef0.bmp");
+	nomsTextures.push_back("19d89130.bmp");
+	nomsTextures.push_back("16cecd10.bmp");
+	nomsTextures.push_back("16c2e0d0.bmp");
+	nomsTextures.push_back("12dbd6d0.bmp");
+	modelOBJ.LireOBJ("Beautiful_Girl.obj", 4, Vector3(1, 2, 2), Materiau(Vector3(0.01, 0.01, 0.01), 0.01), true, nomsTextures);;
+	scene.AjouterPolyedre(&modelOBJ);
 
 	int W = 512;
 	int H = 512;

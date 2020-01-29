@@ -129,3 +129,22 @@ bool operator==(const Vector3 &a, const Vector3 &b)
 {
 	return a.x == b.x && a.y == b.y && a.z == b.z;
 }
+
+double &Vector3::operator[](int indice)
+{
+	switch (indice)
+	{
+	case 0:
+		return x;
+		break;
+	case 1:
+		return y;
+		break;
+	case 2:
+		return z;
+		break;
+	default:
+		return x;
+		break;
+	}
+}
