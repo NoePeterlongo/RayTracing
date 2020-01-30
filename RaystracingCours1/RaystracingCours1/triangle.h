@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Ray.h"
 #include "Materiau.h"
+#include "Divers.h"
 class Triangle
 {
 private:
@@ -17,6 +18,6 @@ public:
 	~Triangle();
 
 	void NouvellesCoordonnees(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C);
-	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt);
+	bool Intersect(Ray &ray, Intersection intersection);
 };
 

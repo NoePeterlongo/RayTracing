@@ -180,13 +180,13 @@ int main() {
 	scene.AjouterPolyedre(&modelOBJ);*/
 
 	
-	/*Polyedre alduin(10);
+	Polyedre alduin(10);
 	std::vector<const char*> nomsTextures;
 	nomsTextures.push_back("alduin.bmp");
 	alduin.LireOBJ("alduin.obj", 5*1e-3, Vector3(0, 0.2, 2), Materiau(Vector3(0.01, 0.01, 0.01), 0.01), true, nomsTextures);;
 	alduin.Tourner(Vector3(1, 0, 0), -90);
 	alduin.Tourner(Vector3(0, 1, 0), -30);
-	scene.AjouterPolyedre(&alduin);*/
+	scene.AjouterPolyedre(&alduin);
 
 
 	int W = 512;

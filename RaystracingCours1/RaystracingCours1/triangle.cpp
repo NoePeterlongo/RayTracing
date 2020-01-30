@@ -36,7 +36,7 @@ Triangle::~Triangle()
 }
 
 
-bool Triangle::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt)
+bool Triangle::Intersect(Ray &ray, Intersection intersection)
 {
 	//Etude du plan
 	//Première condition, rayon non parallèle au plan
@@ -44,17 +44,17 @@ bool Triangle::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *p
 		return false;
 
 	//Calcul du point d'intersection
-	*pt = (d - n.Dot(ray.origine)) / n.Dot(ray.direction);
-	Vector3 pointIntersection = ray.origine + *pt*ray.direction;
-	*pPoint = pointIntersection;
+	*intersection.t = (d - n.Dot(ray.origine)) / n.Dot(ray.direction);
+	Vector3 pointIntersection = ray.origine + *intersection.t*ray.direction;
+	*intersection.point = pointIntersection;
 
 	if (n.Dot(ray.direction) < 0)
-		*pNormale = n;
+		*intersection.normale = n;
 	else
-		*pNormale = Vector3() - n;
+		*intersection.normale = Vector3() - n;
 
 	//Intersection avec le plan si t>0
-	if (*pt < 0)
+	if (*intersection.t < 0)
 		return false;
 
 	//Etude du parallelogramme
@@ -75,6 +75,8 @@ bool Triangle::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *p
 
 	if (!(x2 > 0 && x2 < 1 && y2 > 0 && y2 < 1))
 		return false;
+	
+	*intersection.materiau = materiau;
 
 	return true;
 }

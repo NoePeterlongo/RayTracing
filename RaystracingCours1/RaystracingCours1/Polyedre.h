@@ -27,7 +27,7 @@ public:
 
 	void LireSTL(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau);
 	void LireOBJ(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau, bool fichiersTexture, std::vector<const char*>nomsTextures);
-	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt, Materiau *materiau);
+	bool Intersect(Ray &ray, Intersection intersection);
 	void Tourner(Vector3 axe, double angle);
 
 };

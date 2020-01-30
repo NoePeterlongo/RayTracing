@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="BoiteAcceleration.h" />
     <ClInclude Include="ChargementOBJ.h" />
+    <ClInclude Include="Divers.h" />
     <ClInclude Include="Lampe.h" />
     <ClInclude Include="Materiau.h" />
     <ClInclude Include="MoteurPhysique.h" />
@@ -174,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoiteAcceleration.cpp" />
+    <ClCompile Include="Divers.cpp" />
     <ClCompile Include="Lampe.cpp" />
     <ClCompile Include="Materiau.cpp" />
     <ClCompile Include="MoteurPhysique.cpp" />

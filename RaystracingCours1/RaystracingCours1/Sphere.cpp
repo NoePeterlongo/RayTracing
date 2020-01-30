@@ -18,7 +18,7 @@ Sphere::~Sphere()
 {
 }
 
-bool Sphere::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt)
+bool Sphere::Intersect(Ray &ray, Intersection intersection)
 {
 	//Polynome a*t² + b*t + c
 	double a = 1;
@@ -44,9 +44,10 @@ bool Sphere::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt)
 			return false;
 
 		//Arrivé ici, il y a intersection, et on a le bon t
-		*pPoint = ray.origine + t * ray.direction;
-		*pNormale = (*pPoint - centre).Normaliser();
-		*pt = t;
+		*intersection.point = ray.origine + t * ray.direction;
+		*intersection.normale = (*intersection.point - centre).Normaliser();
+		*intersection.t = t;
+		*intersection.materiau = materiau;
 		return true;
 	}
 

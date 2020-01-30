@@ -297,41 +297,37 @@ void Polyedre::Tourner(Vector3 axe, double angle)
 	MiseAJourBoites();
 }
 
-bool Polyedre::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt, Materiau *materiau)
+bool Polyedre::Intersect(Ray &ray, Intersection intersection)
 {
-	*pt = 1e20;
-	bool intersection = false;
+	*intersection.t = 1e20;
+	bool intersectionVrai = false;
 	Vector3 pointInterm, nInterm;
-	double tInterm;
+	Materiau materiauInterm;
+	double tInterm=1e20;
+	Intersection intersectionLocale = { &pointInterm, &nInterm, &materiauInterm,  &tInterm};
 
 	for (int i = 0; i < boites.size(); i++)
 		if (boites[i].Intersect(ray))
 		{
 			for (int j = 0; j < boites[i].triangles.size(); j++)
 			{
-				if (boites[i].triangles[j]->Intersect(ray, &pointInterm, &nInterm, &tInterm))
-					if(tInterm < *pt)
+				if (boites[i].triangles[j]->Intersect(ray, intersectionLocale))
+					if(*intersectionLocale.t < *intersection.t)
 					{
-						*pt = tInterm;
-						intersection = true;
-						*pPoint = pointInterm;
-						*pNormale = nInterm;
-						*materiau = boites[i].triangles[j]->materiau;
+						intersectionVrai = true;
+						CopierValeurs(intersectionLocale, intersection);
 					}
 			}
 		}
 
 	for (int j = 0; j < boitePrincipale.triangles.size(); j++)
 	{
-		if (boitePrincipale.triangles[j]->Intersect(ray, &pointInterm, &nInterm, &tInterm))
-			if (tInterm < *pt)
+		if (boitePrincipale.triangles[j]->Intersect(ray, intersectionLocale))
+			if (*intersectionLocale.t < *intersection.t)
 			{
-				*pt = tInterm;
-				intersection = true;
-				*pPoint = pointInterm;
-				*pNormale = nInterm;
-				*materiau = boitePrincipale.triangles[j]->materiau;
+				intersectionVrai = true;
+				CopierValeurs(intersectionLocale, intersection); 
 			}
 	}
-	return intersection;
+	return intersectionVrai;
 }

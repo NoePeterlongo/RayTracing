@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Ray.h"
 #include "Materiau.h"
+#include "Divers.h"
 class Sphere
 {
 public:
@@ -12,6 +13,6 @@ public:
 	Sphere(const Vector3& _centre, double _rayon, const Materiau &_materiau);
 	~Sphere();
 
-	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt);
+	bool Intersect(Ray &ray, Intersection intersection);
 };
 

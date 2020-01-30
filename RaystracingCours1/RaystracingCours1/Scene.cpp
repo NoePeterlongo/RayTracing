@@ -2,7 +2,6 @@
 #include "Scene.h"
 
 
-
 Scene::Scene()
 {
 	distrib = std::uniform_real_distribution<double>(0, 1);
@@ -18,10 +17,6 @@ void Scene::AjouterSphere(Sphere *pSphere)
 	spheres.push_back(pSphere);
 }
 
-void Scene::AjouterPolygone(Polygone *pPolygone)
-{
-	polygones.push_back(pPolygone);
-}
 
 void Scene::AjouterPolyedre(Polyedre *pPolyedre)
 {
@@ -38,78 +33,48 @@ void Scene::AjouterLampe(Vector3 position, Vector3 intensite)
 	lampes.push_back(new Lampe(position, intensite));
 }
 
-bool Scene::Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, Materiau *pMateriau)
+bool Scene::Intersect(Ray &ray, Intersection intersection)
 {
 	Vector3 point, normale;
-	bool intersection = false;
-	double t = 1e10;//Grand
+	Materiau materiau;
+	bool intersectionVrai = false;
+	double tIntersectionLocale = 1e20;
+	Intersection intersectionLocale = { &point, &normale, &materiau, &tIntersectionLocale };//locale au sens de variable
 
 	//Parcours des spheres
 	for (int i = 0; i < spheres.size(); i++)
 	{
-		Vector3 _pt, _n;
-		double _t;
-		if(spheres[i]->Intersect(ray, &_pt, &_n, &_t))//Contact avec la sphere
-			if (_t < t)//C'est la sphere la plus proche jusqu'ici
+		if(spheres[i]->Intersect(ray, intersectionLocale))//Contact avec la sphere
+			if (*intersectionLocale.t < *intersection.t)//C'est la sphere la plus proche jusqu'ici
 			{
-				intersection = true;
-				t = _t;
-				*pPoint = _pt;
-				*pNormale = _n;
-				*pMateriau = spheres[i]->materiau;
+				intersectionVrai = true;
+				CopierValeurs(intersectionLocale, intersection);
 			}
-	}
-
-	//Parcours des polygones
-	for (int i = 0; i < polygones.size(); i++)
-	{
-		//Etude de la sphere du polygone
-		Vector3 _pt, _n;
-		double _t;
-		bool contactAvecLaSphere = false;
-		Sphere spherePolygone(polygones[i]->barycentre, polygones[i]->rayon, NOIR);
-		if (spherePolygone.Intersect(ray, &_pt, &_n, &_t))//Contact avec la sphere
-			contactAvecLaSphere = true;
-		
-		if(contactAvecLaSphere)
-			for(int j = 0; j<polygones[i]->faces.size(); j++)
-				if (polygones[i]->faces[j]->Intersect(ray, &_pt, &_n, &_t))//Contact avec le triangle
-					if (_t < t)//C'est l'objet le plus proche jusqu'ici
-					{
-						intersection = true;
-						t = _t;
-						*pPoint = _pt;
-						*pNormale = _n;
-						*pMateriau = polygones[i]->faces[j]->materiau;
-					}
 	}
 
 	//Parcours des polyedres
 	for (int i = 0; i < polyedres.size(); i++)
 	{
-		Vector3 _pt, _n;
-		double _t;
-		Materiau materiau;
-		if(polyedres[i]->Intersect(ray, &_pt, &_n, &_t, &materiau))
-			if (_t < t)
+		if(polyedres[i]->Intersect(ray, intersectionLocale))
+			if (*intersectionLocale.t < *intersection.t)
 			{
-				intersection = true;
-				t = _t;
-				*pPoint = _pt;
-				*pNormale = _n;
-				*pMateriau = materiau;
+				intersectionVrai = true;
+				CopierValeurs(intersectionLocale, intersection);
 			}
 	}
 
-	return intersection;
+	return intersectionVrai;
 }
 
 Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 {
 	Vector3 pointIntersection, normaleIntersection, pointIntersectionO, normaleIntersectionO;
 	Materiau materiau, materiauO;
+	double tIntersection=1e6, tIntersectionOmbre=1e6;
+	Intersection intersection = { &pointIntersection, &normaleIntersection, &materiau, &tIntersection },
+		intersectionOmbre = { &pointIntersectionO, &normaleIntersectionO, &materiauO, &tIntersectionOmbre };
 	Vector3 intensite(0,0,0);//Noir
-	if (Intersect(ray, &pointIntersection, &normaleIntersection, &materiau))
+	if (Intersect(ray, intersection))
 	{
 		//Partie speculaire
 		if (materiau.spec > 0 && nb_rebonds > 0)
@@ -151,7 +116,7 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 					compoNorm = rapportIndices * ray.direction.Dot(normale) + std::sqrt(partieSousRacine);
 
 
-				if (partieSousRacine > 0)
+				if (partieSousRacine > 0 || nb_rebonds <= 0)
 				{
 					nouvelleDirection = compoInc * ray.direction - compoNorm * normale;
 					Ray nvRay(pointIntersection - 0.001*normale, nouvelleDirection);
@@ -208,7 +173,7 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 
 			Ray rayonOmbre(pointIntersection + 0.001*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
 
-			if (Intersect(rayonOmbre, &pointIntersectionO, &normaleIntersectionO, &materiauO))
+			if (Intersect(rayonOmbre, intersectionOmbre))
 			{
 				//On regarde si l'intersection est plus proche de P que la lampe
 				if ((pointIntersectionO - pointIntersection).Norme2() < (positionLampe - pointIntersection).Norme2())
