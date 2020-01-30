@@ -89,8 +89,9 @@ void Polyedre::MiseAJourBoites()
 	}
 }
 
-void Polyedre::LireSTL(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau)
+void Polyedre::LireSTL(const char *nomFichier, double ratio, Vector3 _origine, Materiau materiau)
 {
+	origine = _origine;
 	std::ifstream fichier(nomFichier);
 
 	if (fichier)
@@ -134,7 +135,7 @@ void Polyedre::LireSTL(const char *nomFichier, double ratio, Vector3 origine, Ma
 					chaineNombre = chaineNombre.substr(1);
 				z = strToDouble(chaineNombre);
 
-				Vector3 A = Vector3(origine.x + ratio * x, origine.y + ratio * y, origine.z + ratio * z);
+				Vector3 A = Vector3(_origine.x + ratio * x, _origine.y + ratio * y, _origine.z + ratio * z);
 
 
 				//Point B
@@ -168,7 +169,7 @@ void Polyedre::LireSTL(const char *nomFichier, double ratio, Vector3 origine, Ma
 					chaineNombre = chaineNombre.substr(1);
 				z = strToDouble(chaineNombre);
 
-				Vector3 B = Vector3(origine.x + ratio * x, origine.y + ratio * y, origine.z + ratio * z);
+				Vector3 B = Vector3(_origine.x + ratio * x, _origine.y + ratio * y, _origine.z + ratio * z);
 
 				//Point C
 				std::getline(fichier, ligne);
@@ -201,7 +202,7 @@ void Polyedre::LireSTL(const char *nomFichier, double ratio, Vector3 origine, Ma
 					chaineNombre = chaineNombre.substr(1);
 				z = strToDouble(chaineNombre);
 
-				Vector3 C = Vector3(origine.x + ratio * x, origine.y + ratio * y, origine.z + ratio * z);
+				Vector3 C = Vector3(_origine.x + ratio * x, _origine.y + ratio * y, _origine.z + ratio * z);
 
 
 				Triangle *pTriangle = new Triangle(A, B, C, materiau);
@@ -225,9 +226,10 @@ double Polyedre::strToDouble(std::string chaine)
 }
 
 
-void Polyedre::LireOBJ(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau, bool fichiersTexture, std::vector<const char*>nomsTextures)
+void Polyedre::LireOBJ(const char *nomFichier, double ratio, Vector3 _origine, Materiau materiau, bool fichiersTexture, std::vector<const char*>nomsTextures)
 {
-	Geometry geo(nomFichier, ratio, origine);
+	origine = _origine;
+	Geometry geo(nomFichier, ratio, _origine);
 
 	if (fichiersTexture)
 	{
@@ -261,6 +263,36 @@ void Polyedre::LireOBJ(const char *nomFichier, double ratio, Vector3 origine, Ma
 			triangles.push_back(pTriangle);
 		}
 		
+	}
+	MiseAJourBoites();
+}
+
+void Polyedre::Tourner(Vector3 axe, double angle)
+{
+	Vector3 a, b, c = axe;
+	Vector3 ap, bp;
+	angle *= 3.14 / 180;
+
+	c.Normaliser();
+
+	//cas 1 axe = (1,0,0)
+	if (c == Vector3(1, 0, 0))
+		a = Vector3(0, 1, 0);
+	else
+		a = ProduitVectoriel(c, Vector3(1, 0, 0)).Normaliser();
+
+	b = ProduitVectoriel(c, a);
+
+	ap = std::cos(angle)*a + std::sin(angle)*b;
+	bp = -std::sin(angle)*a + std::cos(angle)*b;
+
+	for (int i = 0; i < triangles.size(); i++)
+	{
+		Vector3 nvA, nvB, nvC;//Pas les mêmes A, B, C que les axes
+		nvA = origine + (triangles[i]->A - origine).Dot(a)*ap + (triangles[i]->A - origine).Dot(b)*bp + (triangles[i]->A - origine).Dot(c)*c;
+		nvB = origine + (triangles[i]->B - origine).Dot(a)*ap + (triangles[i]->B - origine).Dot(b)*bp + (triangles[i]->B - origine).Dot(c)*c;
+		nvC = origine + (triangles[i]->C - origine).Dot(a)*ap + (triangles[i]->C - origine).Dot(b)*bp + (triangles[i]->C - origine).Dot(c)*c;
+		triangles[i]->NouvellesCoordonnees(nvA, nvB, nvC);
 	}
 	MiseAJourBoites();
 }

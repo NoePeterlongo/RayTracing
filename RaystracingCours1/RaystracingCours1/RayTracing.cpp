@@ -99,8 +99,8 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 
 int main() {
 
-	Vector3 positionCamera(0, 5, 9);
-	Vector3 rotationCamera(0, -20, 0);
+	Vector3 positionCamera(3, 5, 9);
+	Vector3 rotationCamera(0, -10, 0);
 
 	double FOV = 70*3.14/180;
 
@@ -109,10 +109,10 @@ int main() {
 
 	Scene scene;
 	scene.AjouterLampe(positionLampe, intensiteLampe);
-	scene.AjouterLampe(Vector3(-5, 9, 0), Vector3(1e7, 1e7, 1e7));
+	//scene.AjouterLampe(Vector3(-5, 9, 0), Vector3(1e7, 1e7, 1e7));
 
 
-	Sphere murDroit(Vector3(1000, 0, 0), 990, Materiau(ROUGE, 0, false, 0, 0.5));
+	Sphere murDroit(Vector3(1000, 0, 0), 990, Materiau(ROUGE*0.3, 0.1, false, 0, 0.5));
 	Sphere murGauche(Vector3(-1000, 0, 0), 990, VERT);
 	Sphere sol(Vector3(0, -1000, 0), 1000, Materiau(CYAN, 0, false, 0, 0.5));
 	Sphere murDevant(Vector3(0, 0, -1000), 990, Materiau(GRIS, 0, false, 0, 0.5));
@@ -127,7 +127,7 @@ int main() {
 	scene.AjouterSphere(&murDerriere);
 
 	Sphere sphMiroir(Vector3(6, 5, -3), 2, Materiau(NOIR, 1));
-	//scene.AjouterSphere(&sphMiroir);
+	scene.AjouterSphere(&sphMiroir);
 	Sphere sphTransparente(Vector3(1, 8, -4), 2, Materiau(NOIR, 0.001, true, 1.3));
 	scene.AjouterSphere(&sphTransparente);
 	Sphere sphDiff(Vector3(8, 8, -0), 2, Materiau(GRIS*0.5, 0, false, 0, 1));
@@ -167,6 +167,7 @@ int main() {
 	//scene.AjouterPolygone(&model2);
 	//scene.AjouterPolyedre(&model2V2);
 
+	/*
 	Polyedre modelOBJ(7);
 	std::vector<const char*> nomsTextures;
 	nomsTextures.push_back("12c14c70.bmp");
@@ -176,26 +177,31 @@ int main() {
 	nomsTextures.push_back("16c2e0d0.bmp");
 	nomsTextures.push_back("12dbd6d0.bmp");
 	modelOBJ.LireOBJ("Beautiful_Girl.obj", 4, Vector3(1, 2, 2), Materiau(Vector3(0.01, 0.01, 0.01), 0.01), true, nomsTextures);;
-	scene.AjouterPolyedre(&modelOBJ);
+	scene.AjouterPolyedre(&modelOBJ);*/
+
+	
+	/*Polyedre alduin(10);
+	std::vector<const char*> nomsTextures;
+	nomsTextures.push_back("alduin.bmp");
+	alduin.LireOBJ("alduin.obj", 5*1e-3, Vector3(0, 0.2, 2), Materiau(Vector3(0.01, 0.01, 0.01), 0.01), true, nomsTextures);;
+	alduin.Tourner(Vector3(1, 0, 0), -90);
+	alduin.Tourner(Vector3(0, 1, 0), -30);
+	scene.AjouterPolyedre(&alduin);*/
+
 
 	int W = 512;
 	int H = 512;
 	double d = W / (2 * std::tan(FOV / 2));
 	std::vector<unsigned char> image(W*H * 3, 0);
 
-	Vector3 pointIntersection, normaleIntersection;
-	Vector3 pointIntersectionO, normaleIntersectionO;
-	Materiau materiau, materiauO;
-	bool aLOmbre = false;
-
 	for (int iAnimation = 0; iAnimation < 1; iAnimation++)
 	{
-		/*
-		moteur.Update(0.5);
+		
+		//moteur.Update(0.2);
 
-		positionCamera.z = 9 - 18 * (float)iAnimation / 200;
+		/*positionCamera.z = 9 - 18 * (float)iAnimation / 200;
 
-		Vector3 front = sphDiff.centre - positionCamera;
+		/*Vector3 front = sphDiff.centre - positionCamera;
 		rotationCamera.y = std::atan2(-front.z, front.x)*180/3.14 - 90;*/
 
 		auto start = std::chrono::high_resolution_clock::now();

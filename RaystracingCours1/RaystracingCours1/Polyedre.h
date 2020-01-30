@@ -15,6 +15,7 @@ private:
 	std::vector<Triangle*> triangles;
 	std::vector<BoiteAcceleration> boites;
 	BoiteAcceleration boitePrincipale;
+	Vector3 origine;
 
 	void MiseAJourBoites();
 	int nbBoitesCote;//racine cubique du nombre de boites
@@ -27,6 +28,6 @@ public:
 	void LireSTL(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau);
 	void LireOBJ(const char *nomFichier, double ratio, Vector3 origine, Materiau materiau, bool fichiersTexture, std::vector<const char*>nomsTextures);
 	bool Intersect(Ray &ray, Vector3 *pPoint, Vector3 *pNormale, double *pt, Materiau *materiau);
-	
+	void Tourner(Vector3 axe, double angle);
 
 };
