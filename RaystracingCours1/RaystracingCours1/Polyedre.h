@@ -16,6 +16,7 @@ private:
 	std::vector<BoiteAcceleration> boites;
 	BoiteAcceleration boitePrincipale;
 	Vector3 origine;
+	Geometry geo;
 
 	void MiseAJourBoites();
 	int nbBoitesCote;//racine cubique du nombre de boites

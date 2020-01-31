@@ -8,6 +8,7 @@ Triangle::Triangle(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C, cons
 	A = Vector3(_A);
 	B = Vector3(_B);
 	C = Vector3(_C);
+	triangleTexture = false;
 	initialiser();
 }
 
@@ -60,7 +61,7 @@ bool Triangle::Intersect(Ray &ray, Intersection intersection)
 	//Etude du parallelogramme
 	double x = (pointIntersection - A).Dot(u1)/u1.Norme2();
 	double y = (pointIntersection - A).Dot(v)/v.Norme2();
-	double y2 = y / beta;
+	double y2 = y / beta;//coordonnee sur u2?
 	double x2 = x - alpha * y2;
 
 	if (!(x2 > 0 && x2 < 1 && y2 > 0 && y2 < 1))
@@ -70,13 +71,28 @@ bool Triangle::Intersect(Ray &ray, Intersection intersection)
 	//Etude du triangle
 	x = (pointIntersection - B).Dot(u3)/u3.Norme2();
 	y = (pointIntersection - B).Dot(v2)/v2.Norme2();	
-	y2 = y / beta2;
-	x2 = x - alpha2 * y2;
+	double y3 = y / beta2;//coordonnee sur u3?
+	double x3 = x - alpha2 * y2;//coordonnee sur u1 ?
 
-	if (!(x2 > 0 && x2 < 1 && y2 > 0 && y2 < 1))
+	if (!(x3 > 0 && x3 < 1 && y3 > 0 && y3 < 1))
 		return false;
 	
-	*intersection.materiau = materiau;
+	if (triangleTexture)
+	{
+		Vector3 positionUV = coordUVa + (coordUVb - coordUVa)*x2 + (coordUVc - coordUVa)*y2;
+		//positionUV = (coordUVa+coordUVb+coordUVc)/3;
+		//positionUV = coordUVa;
+		//positionUV = VECTEUR_NUL;
+		int xUV = positionUV.x*wTexture;
+		int yUV = positionUV.y*hTexture;
+		double R = (*texture)[(wTexture*yUV + xUV) * 3];
+		double G = (*texture)[(wTexture*yUV + xUV) * 3 + 1];
+		double B = (*texture)[(wTexture*yUV + xUV) * 3 + 2];
+		materiau.albedo = Vector3(R, G, B) / 800;
+		*intersection.materiau = materiau;
+	}
+	else
+		*intersection.materiau = materiau;
 
 	return true;
 }

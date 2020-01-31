@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "Vector3.h"
 #include "Ray.h"
 #include "Materiau.h"
@@ -16,6 +17,13 @@ public:
 	Materiau materiau;
 	Triangle(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C, const Materiau &_materiau);
 	~Triangle();
+
+
+	bool triangleTexture;
+	std::vector<unsigned char> *texture;
+	int wTexture, hTexture;
+	Vector3 coordUVa, coordUVb, coordUVc;
+
 
 	void NouvellesCoordonnees(const Vector3 &_A, const Vector3 &_B, const Vector3 &_C);
 	bool Intersect(Ray &ray, Intersection intersection);

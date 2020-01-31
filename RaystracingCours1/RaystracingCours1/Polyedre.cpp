@@ -229,7 +229,7 @@ double Polyedre::strToDouble(std::string chaine)
 void Polyedre::LireOBJ(const char *nomFichier, double ratio, Vector3 _origine, Materiau materiau, bool fichiersTexture, std::vector<const char*>nomsTextures)
 {
 	origine = _origine;
-	Geometry geo(nomFichier, ratio, _origine);
+	geo = Geometry(nomFichier, ratio, _origine);
 
 	if (fichiersTexture)
 	{
@@ -244,7 +244,7 @@ void Polyedre::LireOBJ(const char *nomFichier, double ratio, Vector3 _origine, M
 			int faceGroup = geo.indices[i].faceGroup;
 			if (faceGroup < geo.textures.size())
 			{
-				double R, G, B;
+				double R, G, B, R2;
 				int x, y;
 				x = geo.w[faceGroup] * geo.uvs[geo.indices[i].uvi][0];
 				y = geo.h[faceGroup] * geo.uvs[geo.indices[i].uvi][1];
@@ -252,8 +252,20 @@ void Polyedre::LireOBJ(const char *nomFichier, double ratio, Vector3 _origine, M
 				G = geo.textures[faceGroup][(geo.w[faceGroup] * y + x) * 3 + 1];
 				B = geo.textures[faceGroup][(geo.w[faceGroup] * y + x) * 3 + 2];
 				//Materiau mat(Vector3(geo.textures[0][geo.indices[i].uvi], geo.textures[0][geo.indices[i].uvj], geo.textures[0][geo.indices[i].uvk])/1024);
-				Materiau mat(Vector3(R, G, B) / 800);
-				Triangle *pTriangle = new Triangle(geo.vertices[geo.indices[i].vtxi], geo.vertices[geo.indices[i].vtxj], geo.vertices[geo.indices[i].vtxk], mat);
+				/*Materiau mat(Vector3(R, G, B) / 800);*/
+				Triangle *pTriangle = new Triangle(geo.vertices[geo.indices[i].vtxi], geo.vertices[geo.indices[i].vtxj], geo.vertices[geo.indices[i].vtxk], materiau);
+				pTriangle->triangleTexture = true;
+				pTriangle->coordUVa = geo.uvs[geo.indices[i].uvi];
+				pTriangle->coordUVb = geo.uvs[geo.indices[i].uvj];
+				pTriangle->coordUVc = geo.uvs[geo.indices[i].uvk];
+				pTriangle->texture = &geo.textures[faceGroup];
+				pTriangle->wTexture = geo.w[faceGroup];
+				pTriangle->hTexture = geo.h[faceGroup];
+
+				/*int xUV = pTriangle->coordUVa.x*pTriangle->wTexture;
+				int yUV = pTriangle->coordUVa.y*pTriangle->hTexture;
+				R2 = (*(pTriangle->texture))[pTriangle->wTexture*yUV + xUV];*/
+
 				triangles.push_back(pTriangle);
 			}
 		}

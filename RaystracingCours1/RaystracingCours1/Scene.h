@@ -16,10 +16,13 @@ class Scene
 	std::default_random_engine engine;
 	std::uniform_real_distribution<double> distrib;
 	
+	std::vector<unsigned char> skybox;
 public:
 	std::vector<Sphere*> spheres;
 	std::vector<Polyedre*> polyedres;
 	std::vector<Lampe*> lampes;
+
+	double dureteOmbres;//0 pour des ombres intenses
 
 	Scene();
 	~Scene();

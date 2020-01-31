@@ -5,6 +5,21 @@
 Scene::Scene()
 {
 	distrib = std::uniform_real_distribution<double>(0, 1);
+	dureteOmbres = 0;
+
+	/*FILE* f;
+	f = fopen("skybox.bmp", "rb");
+	unsigned char info[54];
+	fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
+
+	int w = *(int*)&info[18]; // extract image height and width from header
+	int h = *(int*)&info[22];
+
+	int size = 3 * w * h;
+	skybox.resize(size);
+
+	fread(&skybox[0], sizeof(unsigned char), size, f); // read the rest of the data at once
+	fclose(f);*/
 }
 
 
@@ -180,7 +195,7 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 					aLOmbre = true;
 			}
 
-			double coefOmbre = aLOmbre ? 0 : 1;
+			double coefOmbre = aLOmbre ? dureteOmbres : 1;
 
 
 			intensite = intensite + coefOmbre * intensiteLampe * materiau.albedo *
