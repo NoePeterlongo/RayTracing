@@ -29,6 +29,8 @@ public:
 	void Tourner(Vector3 axe, double angle);
 
 	Vector3 & operator+=(const Vector3 &a);
+	Vector3 & operator*=(double coef);
+	Vector3 & operator/=(double coef);
 	double &operator[](int indice);
 };
 

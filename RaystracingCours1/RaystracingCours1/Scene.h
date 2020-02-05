@@ -22,6 +22,8 @@ public:
 	std::vector<Polyedre*> polyedres;
 	std::vector<Lampe*> lampes;
 
+	Sphere sphereLumineuse;
+
 	double dureteOmbres;//0 pour des ombres intenses
 
 	Scene();

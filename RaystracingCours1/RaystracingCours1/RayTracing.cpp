@@ -57,7 +57,7 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 			//On fait nbRayons lancés
 			Vector3 couleur = NOIR;
 			bool pixelStochastique = true;
-			for (int k = 0; k < nbRayons && (pixelStochastique||ANTI_CRENELAGE); k++)
+			for (int k = 0; k < nbRayons && (pixelStochastique||ANTI_CRENELAGE||ECLAIRAGE_PAR_SPHERES); k++)
 			{
 				pixelStochastique = false;
 
@@ -80,7 +80,7 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 				couleur = couleur + a1;
 			}
 				
-			if (pixelStochastique||ANTI_CRENELAGE)
+			if (pixelStochastique||ANTI_CRENELAGE||ECLAIRAGE_PAR_SPHERES)
 			{
 				couleur = couleur / nbRayons;
 				//couleur = ROUGE * 255;
@@ -99,30 +99,32 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 
 int main() {
 
-	//Vector3 positionCamera(3, 5, 9);
-	Vector3 positionCamera(0, 1.5, 6);
+	Vector3 positionCamera(3, 5, 9);
+	//Vector3 positionCamera(0, 1.5, 6);
 	Vector3 rotationCamera(0, 0, 0);
 
 	double FOV = 70*3.14/180;
 
 	Vector3 positionLampe(5, 9, 9);
 	Vector3 intensiteLampe(5e7, 5e7, 5e7);
+	Materiau materiauLampe(VECTEUR_NUL);
+	materiauLampe.emmissivite = Vector3(5e5, 3e5, 3e5);
 
 	Scene scene;
-	scene.dureteOmbres = 0.1;
+	scene.dureteOmbres = 0;
 	scene.AjouterLampe(positionLampe, intensiteLampe);
-	scene.AjouterLampe(Vector3(-5, 1, 5), Vector3(1e7, 1e7, 1e7));
+	//scene.AjouterLampe(Vector3(-5, 1, 5), Vector3(1e7, 1e7, 1e7));
 
 
 	Sphere murDroit(Vector3(1000, 0, 0), 990, Materiau(ROUGE*0.3, 0.1, false, 0, 0.5));
 	Sphere murGauche(Vector3(-1000, 0, 0), 990, VERT);
 	Sphere sol(Vector3(0, -1000, 0), 1000, Materiau(GRIS, 0, false, 0, 0.5));
-	Sphere murDevant(Vector3(0, 0, -1000), 990, Materiau(GRIS, 0, false, 0, 0.5));
+	Sphere murDevant(Vector3(0, 0, -1000), 990, Materiau(GRIS, 0, false, 0, 1.5));
 	Sphere murDerriere(Vector3(0, 0, 1000), 990, ROUGE*0.3);
 	Sphere plafond(Vector3(0, 1000, 0), 990, BLEU);
 
 	scene.AjouterSphere(&sol);
-	/*scene.AjouterSphere(&murDevant);
+	scene.AjouterSphere(&murDevant);
 	scene.AjouterSphere(&murGauche);
 	scene.AjouterSphere(&murDroit);
 	scene.AjouterSphere(&plafond);
@@ -136,8 +138,10 @@ int main() {
 	scene.AjouterSphere(&sphDiff);
 	Sphere perc(Vector3(1, 0.6, -2), 1, Materiau(ROUGE, 0.02));
 	scene.AjouterSphere(&perc);
+	perc.materiau = materiauLampe;
+	scene.sphereLumineuse = perc;
 
-	MoteurPhysique moteur;
+	/*MoteurPhysique moteur;
 	moteur.AjouterSphere(SpherePhy(&sol));
 	moteur.AjouterSphere(SpherePhy(&sphTransparente, 1, false, 0, Vector3(0.3, 0, 0)));
 	moteur.AjouterSphere(SpherePhy(&sphMiroir, 0.8, false));
@@ -157,10 +161,10 @@ int main() {
 	Polyedre bulbasaur2(2);
 	bulbasaur2.LireSTL("CE3_bulbasaur_starter_1gen_flowalistik.stl", 0.07, Vector3(3, 1.3, 0), Materiau(Vector3(0, 0.1, 0.03), 0.1));
 	*/
-	Polygone model2(Vector3(3, 1.3, 0));
+	//Polygone model2(Vector3(3, 1.3, 0));
 	//model2.ChargerFichier("chateau4.6.1.stl", 0.07, Materiau(Vector3(0, 0.1, 0.03), 0.1));
 
-	Polyedre model2V2(7);
+	//Polyedre model2V2(7);
 	//model2V2.LireSTL("chateau4.6.1.stl", 0.07, Vector3(3, 4, 1), Materiau(Vector3(0.01, 0.01, 0.01), 0.01));
 
 	//poly2.Tourner(Vector3(0, 1, 0), 90);
@@ -182,7 +186,7 @@ int main() {
 	scene.AjouterPolyedre(&modelOBJ);*/
 
 	
-	Polyedre alduin(10);
+	/*Polyedre alduin(10);
 	std::vector<const char*> nomsTextures;
 	nomsTextures.push_back("alduin.bmp");
 	nomsTextures.push_back("alduineyes.bmp");
@@ -190,10 +194,10 @@ int main() {
 	alduin.LireOBJ("alduin.obj", 5*1e-3, Vector3(0, 0.2, 2), Materiau(Vector3(0.01, 0.01, 0.01)), true, nomsTextures);;
 	alduin.Tourner(Vector3(1, 0, 0), -90);
 	alduin.Tourner(Vector3(0, 1, 0), -50);
-	scene.AjouterPolyedre(&alduin);
+	scene.AjouterPolyedre(&alduin);*/
 
 
-	int W = 1024;
+	int W = 512;
 	int H = 512;
 	double d = W / (2 * std::tan(FOV / 2));
 	std::vector<unsigned char> image(W*H * 3, 0);
@@ -235,7 +239,8 @@ int main() {
 		sprintf_s(nomFichier, "rendus/%d.png", iAnimation);
 		stbi_write_png(nomFichier, W, H, 3, &image[0], 0);
 	}
-	
+
+	system("start rendus/0.png");
 
 	return 0;
 }

@@ -6,7 +6,8 @@ public:
 	Vector3 albedo;
 	double spec;
 	bool transparent;
-	double indiceRefraction, coefDiffus;
+	double indiceRefraction, coefDiffus ;
+	Vector3 emmissivite = VECTEUR_NUL;
 
 	Materiau();
 	Materiau(const Vector3 &_albedo);

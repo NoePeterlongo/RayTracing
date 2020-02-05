@@ -176,33 +176,71 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 
 		}
 
-		//Partie Diffuse simple
-		Vector3 vS = intensite;
-
-		
-		for (int i = 0; i < lampes.size(); i++)
+		if (ECLAIRAGE_PAR_SPHERES)
 		{
-			Vector3 positionLampe = lampes[i]->position, intensiteLampe = lampes[i]->intensite;
-			//Gestion de l'ombre
-			bool aLOmbre = false;
+			Vector3 OP, e1, e2, vecteurIntermediaire;
+			OP = pointIntersection - sphereLumineuse.centre;
+			if (OP.Normaliser() == Vector3(1, 0, 0))
+				vecteurIntermediaire = Vector3(0, 1, 0);
+			else
+				vecteurIntermediaire = Vector3(1, 0, 0);
 
-			Ray rayonOmbre(pointIntersection + 0.001*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
+			e2 = ProduitVectoriel(OP, vecteurIntermediaire).Normaliser();
+			e1 = ProduitVectoriel(e2, OP.Normaliser());
 
-			if (Intersect(rayonOmbre, intersectionOmbre))
+			double r1 = distrib(engine), r2 = distrib(engine);
+			double xd = std::cos(2 * 3.14*r1)*std::sqrt(1 - r2);
+			double yd = std::sin(2 * 3.14*r1)*std::sqrt(1 - r2);
+			double zd = std::sqrt(r2);
+
+			Vector3 Oxi = xd * e1 + yd * e2 + zd * OP.Normaliser();
+			Vector3 xi = sphereLumineuse.centre + Oxi.Normaliser()*sphereLumineuse.rayon;
+			//nvDirection = PO.Normaliser();
+			Ray nvRay = Ray(pointIntersection + 0.001*normaleIntersection, (xi-pointIntersection).Normaliser());
+
+			//On a notre direction aleatoire
+			Vector3 pL, nL; Materiau matL; double tL = 1e6;
+			Intersection intersectionLumiere = { &pL, &nL, &matL, &tL };
+			if (Intersect(nvRay, intersectionLumiere))
 			{
-				//On regarde si l'intersection est plus proche de P que la lampe
-				if ((pointIntersectionO - pointIntersection).Norme2() < (positionLampe - pointIntersection).Norme2())
-					aLOmbre = true;
+				//On verifie qu'on a bien touche la lumiere i.e. on n'est pas a l'ombre
+				if (!(intersectionLumiere.materiau->emmissivite == VECTEUR_NUL))
+				{
+					Vector3 Px = *intersectionLumiere.point - pointIntersection;
+					Vector3 intensiteEclairage = intersectionLumiere.materiau->emmissivite * materiau.albedo;
+					intensiteEclairage *= -Px.Normaliser().Dot(*intersectionLumiere.normale);
+					intensiteEclairage /= Px.Norme2();
+					intensiteEclairage /= OP.Normaliser().Dot(*intersectionLumiere.normale)/(4*3.14*3.14*sphereLumineuse.rayon*sphereLumineuse.rayon);
+					intensite += intensiteEclairage;
+				}
 			}
-
-			double coefOmbre = aLOmbre ? dureteOmbres : 1;
-
-
-			intensite = intensite + coefOmbre * intensiteLampe * materiau.albedo *
-				std::abs(normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser()))
-				/ ((positionLampe - pointIntersection).Norme2());
 		}
+		else
+		{
+			//Partie Diffuse simple
+			for (int i = 0; i < lampes.size(); i++)
+			{
+				Vector3 positionLampe = lampes[i]->position, intensiteLampe = lampes[i]->intensite;
+				//Gestion de l'ombre
+				bool aLOmbre = false;
 
+				Ray rayonOmbre(pointIntersection + 0.001*normaleIntersection, (positionLampe - pointIntersection).Normaliser());
+
+				if (Intersect(rayonOmbre, intersectionOmbre))
+				{
+					//On regarde si l'intersection est plus proche de P que la lampe
+					if ((pointIntersectionO - pointIntersection).Norme2() < (positionLampe - pointIntersection).Norme2())
+						aLOmbre = true;
+				}
+
+				double coefOmbre = aLOmbre ? dureteOmbres : 1;
+
+
+				intensite = intensite + coefOmbre * intensiteLampe * materiau.albedo *
+					std::abs(normaleIntersection.Dot((positionLampe - pointIntersection).Normaliser()))
+					/ ((positionLampe - pointIntersection).Norme2());
+			}
+		}
 		
 		
 		return intensite;

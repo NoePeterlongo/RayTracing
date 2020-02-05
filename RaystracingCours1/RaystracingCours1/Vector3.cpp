@@ -124,6 +124,16 @@ Vector3 &Vector3::operator+=(const Vector3 &a)
 	return *this;
 }
 
+Vector3 &Vector3::operator*=(double coef)
+{
+	*this = *this*coef;
+	return *this;
+}
+Vector3 &Vector3::operator/=(double coef)
+{
+	*this = *this/coef;
+	return *this;
+}
 
 bool operator==(const Vector3 &a, const Vector3 &b)
 {
