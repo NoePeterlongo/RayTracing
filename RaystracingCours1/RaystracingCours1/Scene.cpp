@@ -180,7 +180,7 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 		{
 			Vector3 OP, e1, e2, vecteurIntermediaire;
 			OP = pointIntersection - sphereLumineuse.centre;
-			if (OP.Normaliser() == Vector3(1, 0, 0))
+			if (abs(OP.Normaliser().Dot(Vector3(1, 0, 0))-1) > 0.5)
 				vecteurIntermediaire = Vector3(0, 1, 0);
 			else
 				vecteurIntermediaire = Vector3(1, 0, 0);
@@ -208,7 +208,7 @@ Vector3 Scene::GetColor(Ray &ray, bool *pixelStochastique, int nb_rebonds)
 				{
 					Vector3 Px = *intersectionLumiere.point - pointIntersection;
 					Vector3 intensiteEclairage = intersectionLumiere.materiau->emmissivite * materiau.albedo;
-					intensiteEclairage *= -Px.Normaliser().Dot(*intersectionLumiere.normale);
+					intensiteEclairage *= abs(Px.Normaliser().Dot(*intersectionLumiere.normale));
 					intensiteEclairage /= Px.Norme2();
 					intensiteEclairage /= OP.Normaliser().Dot(*intersectionLumiere.normale)/(4*3.14*3.14*sphereLumineuse.rayon*sphereLumineuse.rayon);
 					intensite += intensiteEclairage;

@@ -29,7 +29,7 @@ int nbThreadsFinis = 0;
 
 
 void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, int iMax, int jMin, int jMax, 
-	const Vector3 &positionCamera, Vector3 &rotationCamera, double d, Scene &scene, int nbRayons)
+	const Vector3 &positionCamera, Vector3 &rotationCamera, double d, Scene &scene, int nbRayons, int profondeurDeChamp = 0)
 {
 	//#pragma omp parallel for schedule(dynamic,1)
 
@@ -38,6 +38,12 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 
 
 	Vector3 right = Vector3(1, 0, 0), up = Vector3(0, 1, 0), front = Vector3(0, 0, -1);
+	Vector3 rightTourne = right, upTourne = up;
+
+	rightTourne.Tourner(Vector3(1, 0, 0), rotationCamera.x);
+	rightTourne.Tourner(Vector3(0, 1, 0), rotationCamera.y);
+	upTourne.Tourner(Vector3(1, 0, 0), rotationCamera.x);
+	upTourne.Tourner(Vector3(0, 1, 0), rotationCamera.y);
 
 	for (int i = iMin; i < iMax; i++) {
 		if(threadParlant && i%10==0)
@@ -52,14 +58,15 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 			dirRayon.Tourner(Vector3(1, 0, 0), rotationCamera.x);
 			dirRayon.Tourner(Vector3(0, 1, 0), rotationCamera.y);
 
-			Ray rayon(positionCamera, dirRayon);
 
 			//On fait nbRayons lancés
 			Vector3 couleur = NOIR;
 			bool pixelStochastique = true;
-			for (int k = 0; k < nbRayons && (pixelStochastique||ANTI_CRENELAGE||ECLAIRAGE_PAR_SPHERES); k++)
+			for (int k = 0; k < nbRayons && (pixelStochastique||ANTI_CRENELAGE||ECLAIRAGE_PAR_SPHERES||profondeurDeChamp>0); k++)
 			{
 				pixelStochastique = false;
+
+				Ray rayon(positionCamera, dirRayon);
 
 				if (ANTI_CRENELAGE)
 				{
@@ -74,13 +81,25 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 					rayon.direction = dirRayon;
 				}
 
+				if (profondeurDeChamp > 0)
+				{
+					double u1rPF = (double)rand() / RAND_MAX, u2rPF = (double)rand() / RAND_MAX;
+					double xPF = sqrt(-2 * log(u1rPF))*cos(2 * 3.14*u2rPF)*0.1;
+					double yPF = sqrt(-2 * log(u1rPF))*sin(2 * 3.14*u2rPF)*0.1;
+					Vector3 CCp = rightTourne*xPF + upTourne*yPF;//GAussienne, tout ça
+					Vector3 u = rayon.direction*profondeurDeChamp;
+					Vector3 up = (u - CCp).Normaliser();
+					rayon.direction = up;
+					rayon.origine = positionCamera + CCp;
+				}
+
 				Vector3 a1 = scene.GetColor(rayon, &pixelStochastique);
 				a1.Puissance(0.45);
 				a1.Contraindre(0, 255);
 				couleur = couleur + a1;
 			}
 				
-			if (pixelStochastique||ANTI_CRENELAGE||ECLAIRAGE_PAR_SPHERES)
+			if (pixelStochastique||ANTI_CRENELAGE||ECLAIRAGE_PAR_SPHERES || profondeurDeChamp > 0)
 			{
 				couleur = couleur / nbRayons;
 				//couleur = ROUGE * 255;
@@ -104,11 +123,13 @@ int main() {
 	Vector3 rotationCamera(0, 0, 0);
 
 	double FOV = 70*3.14/180;
+	double profondeurDeChamp = 0*sqrt((Vector3(8, 8, -0)-positionCamera).Norme2());
 
 	Vector3 positionLampe(5, 9, 9);
 	Vector3 intensiteLampe(5e7, 5e7, 5e7);
 	Materiau materiauLampe(VECTEUR_NUL);
-	materiauLampe.emmissivite = Vector3(5e5, 3e5, 3e5);
+	materiauLampe.emmissivite = Vector3(7e5, 5e5, 5e5);
+	//materiauLampe.albedo = ROUGE;
 
 	Scene scene;
 	scene.dureteOmbres = 0;
@@ -140,6 +161,7 @@ int main() {
 	scene.AjouterSphere(&perc);
 	perc.materiau = materiauLampe;
 	scene.sphereLumineuse = perc;
+
 
 	/*MoteurPhysique moteur;
 	moteur.AjouterSphere(SpherePhy(&sol));
@@ -216,7 +238,7 @@ int main() {
 
 		std::vector<std::thread> threads;
 		for (int i = 0; i < NB_THREADS; i++)
-			threads.push_back(std::thread(CalculerImage, std::ref(image), H, W, H*(double)i / NB_THREADS, H*(double)(i + 1) / NB_THREADS, 0, W, std::ref(positionCamera), std::ref(rotationCamera), d, std::ref(scene), NB_RAYONS_PAR_PIXEL));
+			threads.push_back(std::thread(CalculerImage, std::ref(image), H, W, H*(double)i / NB_THREADS, H*(double)(i + 1) / NB_THREADS, 0, W, std::ref(positionCamera), std::ref(rotationCamera), d, std::ref(scene), NB_RAYONS_PAR_PIXEL, profondeurDeChamp));
 		for (int i = 0; i < NB_THREADS; i++)
 				threads[i].join();
 
