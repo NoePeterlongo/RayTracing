@@ -84,8 +84,8 @@ void CalculerImage(std::vector<unsigned char> &image, int H, int W, int iMin, in
 				if (profondeurDeChamp > 0)
 				{
 					double u1rPF = (double)rand() / RAND_MAX, u2rPF = (double)rand() / RAND_MAX;
-					double xPF = sqrt(-2 * log(u1rPF))*cos(2 * 3.14*u2rPF)*0.1;
-					double yPF = sqrt(-2 * log(u1rPF))*sin(2 * 3.14*u2rPF)*0.1;
+					double xPF = sqrt(-2 * log(u1rPF))*cos(2 * 3.14*u2rPF)*0.05;
+					double yPF = sqrt(-2 * log(u1rPF))*sin(2 * 3.14*u2rPF)*0.05;
 					Vector3 CCp = rightTourne*xPF + upTourne*yPF;//GAussienne, tout ça
 					Vector3 u = rayon.direction*profondeurDeChamp;
 					Vector3 up = (u - CCp).Normaliser();
@@ -123,23 +123,23 @@ int main() {
 	Vector3 rotationCamera(0, 0, 0);
 
 	double FOV = 70*3.14/180;
-	double profondeurDeChamp = 0*sqrt((Vector3(8, 8, -0)-positionCamera).Norme2());
+	double profondeurDeChamp = sqrt((Vector3(1,2,2) -positionCamera).Norme2());
 
 	Vector3 positionLampe(5, 9, 9);
 	Vector3 intensiteLampe(5e7, 5e7, 5e7);
 	Materiau materiauLampe(VECTEUR_NUL);
-	materiauLampe.emmissivite = Vector3(7e5, 5e5, 5e5);
+	materiauLampe.emmissivite = Vector3(8e5, 6e5, 6e5);
 	//materiauLampe.albedo = ROUGE;
 
 	Scene scene;
-	scene.dureteOmbres = 0;
-	scene.AjouterLampe(positionLampe, intensiteLampe);
+	scene.dureteOmbres = 0.05;
+	//scene.AjouterLampe(positionLampe, intensiteLampe);
 	//scene.AjouterLampe(Vector3(-5, 1, 5), Vector3(1e7, 1e7, 1e7));
 
 
 	Sphere murDroit(Vector3(1000, 0, 0), 990, Materiau(ROUGE*0.3, 0.1, false, 0, 0.5));
 	Sphere murGauche(Vector3(-1000, 0, 0), 990, VERT);
-	Sphere sol(Vector3(0, -1000, 0), 1000, Materiau(GRIS, 0, false, 0, 0.5));
+	Sphere sol(Vector3(0, -1000, 0), 1000, Materiau(CYAN, 0, false, 0, 0.5));
 	Sphere murDevant(Vector3(0, 0, -1000), 990, Materiau(GRIS, 0, false, 0, 1.5));
 	Sphere murDerriere(Vector3(0, 0, 1000), 990, ROUGE*0.3);
 	Sphere plafond(Vector3(0, 1000, 0), 990, BLEU);
@@ -155,9 +155,9 @@ int main() {
 	scene.AjouterSphere(&sphMiroir);
 	Sphere sphTransparente(Vector3(1, 8, -4), 2, Materiau(NOIR, 0.001, true, 1.3));
 	scene.AjouterSphere(&sphTransparente);
-	Sphere sphDiff(Vector3(8, 8, -0), 2, Materiau(GRIS*0.5, 0, false, 0, 1));
+	Sphere sphDiff(Vector3(8, 8, -0), 2, Materiau(GRIS*0.5, 0, false, 0, 2.5));
 	scene.AjouterSphere(&sphDiff);
-	Sphere perc(Vector3(1, 0.6, -2), 1, Materiau(ROUGE, 0.02));
+	Sphere perc(Vector3(5, 9, 9), 1, Materiau(ROUGE, 0.02));
 	scene.AjouterSphere(&perc);
 	perc.materiau = materiauLampe;
 	scene.sphereLumineuse = perc;
@@ -196,7 +196,7 @@ int main() {
 	//scene.AjouterPolyedre(&model2V2);
 
 	
-	/*Polyedre modelOBJ(7);
+	Polyedre modelOBJ(3);
 	std::vector<const char*> nomsTextures;
 	nomsTextures.push_back("12c14c70.bmp");
 	nomsTextures.push_back("13932ef0.bmp");
@@ -205,10 +205,9 @@ int main() {
 	nomsTextures.push_back("16c2e0d0.bmp");
 	nomsTextures.push_back("12dbd6d0.bmp");
 	modelOBJ.LireOBJ("Beautiful_Girl.obj", 4, Vector3(1, 2, 2), Materiau(Vector3(0.01, 0.01, 0.01)), true, nomsTextures);;
-	scene.AjouterPolyedre(&modelOBJ);*/
-
+	scene.AjouterPolyedre(&modelOBJ);
 	
-	/*Polyedre alduin(10);
+	/*Polyedre alduin(8);
 	std::vector<const char*> nomsTextures;
 	nomsTextures.push_back("alduin.bmp");
 	nomsTextures.push_back("alduineyes.bmp");
