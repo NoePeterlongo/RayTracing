@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <cmath>
 #include "triangle.h"
 #include "BoiteAcceleration.h"
 #include "ChargementOBJ.h"

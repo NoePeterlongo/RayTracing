@@ -123,7 +123,7 @@ int main() {
 	Vector3 rotationCamera(0, 0, 0);
 
 	double FOV = 70*3.14/180;
-	double profondeurDeChamp = sqrt((Vector3(1,2,2) -positionCamera).Norme2());
+	double profondeurDeChamp = sqrt((Vector3(6, 5, -3) -positionCamera).Norme2());
 
 	Vector3 positionLampe(5, 9, 9);
 	Vector3 intensiteLampe(5e7, 5e7, 5e7);
@@ -134,7 +134,7 @@ int main() {
 	Scene scene;
 	scene.dureteOmbres = 0.05;
 	//scene.AjouterLampe(positionLampe, intensiteLampe);
-	//scene.AjouterLampe(Vector3(-5, 1, 5), Vector3(1e7, 1e7, 1e7));
+	scene.AjouterLampe(Vector3(-5, 1, 5), Vector3(1e7, 1e7, 1e7));
 
 
 	Sphere murDroit(Vector3(1000, 0, 0), 990, Materiau(ROUGE*0.3, 0.1, false, 0, 0.5));
@@ -160,7 +160,7 @@ int main() {
 	Sphere perc(Vector3(5, 9, 9), 1, Materiau(ROUGE, 0.02));
 	scene.AjouterSphere(&perc);
 	perc.materiau = materiauLampe;
-	scene.sphereLumineuse = perc;
+	//scene.sphereLumineuse = perc;
 
 
 	/*MoteurPhysique moteur;
@@ -175,14 +175,15 @@ int main() {
 	moteur.AjouterSphere(&murDerriere);
 	moteur.AjouterSphere(&murGauche);*/
 
-/*
-	Polygone bulbasaur(Vector3(3, 1.3, 0));
-	bulbasaur.ChargerFichier("CE3_bulbasaur_starter_1gen_flowalistik.stl", 0.07, Materiau(Vector3(0,0.1,0.03), 0.1));
+
+	//Polygone bulbasaur(Vector3(3, 1.3, 0));
+	//bulbasaur.ChargerFichier("CE3_bulbasaur_starter_1gen_flowalistik.stl", 0.07, Materiau(Vector3(0,0.1,0.03), 0.1));
 
 
-	Polyedre bulbasaur2(2);
+	/*Polyedre bulbasaur2(2);
 	bulbasaur2.LireSTL("CE3_bulbasaur_starter_1gen_flowalistik.stl", 0.07, Vector3(3, 1.3, 0), Materiau(Vector3(0, 0.1, 0.03), 0.1));
-	*/
+	scene.AjouterPolyedre(&bulbasaur2);*/
+	
 	//Polygone model2(Vector3(3, 1.3, 0));
 	//model2.ChargerFichier("chateau4.6.1.stl", 0.07, Materiau(Vector3(0, 0.1, 0.03), 0.1));
 
@@ -196,7 +197,7 @@ int main() {
 	//scene.AjouterPolyedre(&model2V2);
 
 	
-	Polyedre modelOBJ(3);
+	/*Polyedre modelOBJ(3);
 	std::vector<const char*> nomsTextures;
 	nomsTextures.push_back("12c14c70.bmp");
 	nomsTextures.push_back("13932ef0.bmp");
@@ -205,7 +206,7 @@ int main() {
 	nomsTextures.push_back("16c2e0d0.bmp");
 	nomsTextures.push_back("12dbd6d0.bmp");
 	modelOBJ.LireOBJ("Beautiful_Girl.obj", 4, Vector3(1, 2, 2), Materiau(Vector3(0.01, 0.01, 0.01)), true, nomsTextures);;
-	scene.AjouterPolyedre(&modelOBJ);
+	scene.AjouterPolyedre(&modelOBJ);*/
 	
 	/*Polyedre alduin(8);
 	std::vector<const char*> nomsTextures;
@@ -257,11 +258,12 @@ int main() {
 		std::cout << "image "<< iAnimation << " en " << elapsed.count() << "s\n";
 
 		char nomFichier[20];
-		sprintf_s(nomFichier, "rendus/%d.png", iAnimation);
+		sprintf(nomFichier, "%d.png", iAnimation);
+		std::cout<<(int)image[100]<<std::endl;
 		stbi_write_png(nomFichier, W, H, 3, &image[0], 0);
 	}
 
-	system("start rendus/0.png");
+	system("eog 0.png");
 
 	return 0;
 }

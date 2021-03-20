@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <cstring>
 #include "Vector3.h"
 
 class TriangleIndices {
@@ -40,7 +41,7 @@ public:
 
 			std::string linetrim(line);
 			linetrim.erase(linetrim.find_last_not_of(" \r\t") + 1);
-			strcpy(line, linetrim.c_str());
+			std::strcpy(line, linetrim.c_str());
 
 			if (line[0] == 'u' && line[1] == 's') {
 				sscanf(line, "usemtl %[^\n]\n", grp);
@@ -70,7 +71,7 @@ public:
 			}
 			if (line[0] == 'v' && line[1] == 'n') {
 				Vector3 vec;
-				sscanf_s(line, "vn %lf %lf %lf\n", &vec[0], &vec[2], &vec[1]); //girl
+				sscanf(line, "vn %lf %lf %lf\n", &vec[0], &vec[2], &vec[1]); //girl
 				normals.push_back(vec);
 			}
 			if (line[0] == 'v' && line[1] == 't') {

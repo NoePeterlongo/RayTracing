@@ -4,9 +4,9 @@
 #define FRESNEL false
 #define ECLAIRAGE_INDIRECT true
 #define ANTI_CRENELAGE true
-#define NB_RAYONS_PAR_PIXEL 100
+#define NB_RAYONS_PAR_PIXEL 25
 
-#define ECLAIRAGE_PAR_SPHERES true
+#define ECLAIRAGE_PAR_SPHERES false
 
 
-#define NB_THREADS 42
+#define NB_THREADS 64

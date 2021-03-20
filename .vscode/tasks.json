@@ -1,0 +1,38 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc build Raytracing",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "-g",
+                "-lstdc++",
+                "-lm",
+                "-lpthread",
+                "-I",
+                "${workspaceFolder}/RaystracingCours1/RaystracingCours1/",
+                "${workspaceFolder}/RaystracingCours1/RaystracingCours1/*.cpp",
+                "-o",
+                "${workspaceFolder}/RaystracingCours1/RaystracingCours1/RayTracing"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "compiler: /usr/bin/gcc"
+        },
+        {
+            "label": "construction gcc",
+            "type": "shell",
+            "command": "gcc -lstdc++ -lm -lpthread -o ./RaystracingCours1/RaystracingCours1/Raytracing -I ./RaystracingCours1/RaystracingCours1/ ./RaystracingCours1/RaystracingCours1/*.cpp && cd RaystracingCours1/RaystracingCours1/ && ./Raytracing",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
+
